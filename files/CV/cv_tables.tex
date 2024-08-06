@@ -1,0 +1,94 @@
+
+In the following a + indicates a graduate advisee, and a * indicates an undergraduate advisee.  The number in brackets is the number of citations as reported by Google Scholar.
+\ifthenelse{\boolean{Journal}}{
+\IfFileExists{Tables/journal.tex} {
+\section*{JOURNAL ARTICLES}
+\input{Tables/journal.tex}
+}}{}
+
+\ifthenelse{\boolean{Refereed}}{
+\IfFileExists{Tables/refereed.tex} {
+\section*{REFEREED CONFERENCE PAPERS}
+\input{Tables/refereed.tex}
+}}{}
+
+\ifthenelse{\boolean{Book}}{
+\IfFileExists{Tables/book.tex} {
+\section*{BOOK CHAPTERS}
+\input{Tables/book.tex}
+}}{}
+
+\ifthenelse{\boolean{Conference}}{
+\IfFileExists{Tables/conference.tex} {
+\section*{CONFERENCES}
+\input{Tables/conference.tex}
+}}{}
+
+\ifthenelse{\boolean{Patent}}{
+\IfFileExists{Tables/patent.tex} {
+\section*{PATENTS}
+\input{Tables/patent.tex}
+}}{}
+
+\ifthenelse{\boolean{Invited}}{
+\IfFileExists{Tables/invited.tex} {
+\section*{INVITED TALKS}
+\input{Tables/invited.tex}
+}}{}
+
+
+\ifthenelse{\boolean{PersonalAwards}}{
+\IfFileExists{Tables/personal_awards.tex} {
+\section*{PERSONAL AWARDS}
+\input{Tables/personal_awards.tex}
+}}{}
+
+\ifthenelse{\boolean{StudentAwards}}{
+\IfFileExists{Tables/student_awards.tex} {
+\section*{STUDENT AWARDS}
+\input{Tables/student_awards.tex}
+}}{}
+
+\ifthenelse{\boolean{Service}}{
+\IfFileExists{Tables/service.tex} {
+\section*{SERVICE}
+\input{Tables/service.tex}
+}}{}
+
+\ifthenelse{\boolean{Reviews}}{
+\IfFileExists{Tables/reviews.tex} {
+\section*{REVIEWING}
+\input{Tables/reviews.tex}
+}}{}
+
+\ifthenelse{\boolean{GradAdvisees}}{
+\IfFileExists{Tables/thesis.tex} {
+\section*{GRADUATE ADVISEES}
+\input{Tables/thesis.tex}
+}}{}
+
+\ifthenelse{\boolean{UndergradResearch}}{
+\IfFileExists{Tables/undergraduate_research.tex} {
+\section*{UNDERGRADUATE RESEARCH}
+\input{Tables/undergraduate_research.tex}
+}}{}
+
+\ifthenelse{\boolean{Teaching}}{
+\IfFileExists{Tables/teaching.tex} {
+\section*{Teaching}
+This table includes all classes taught that had reported teaching evaluations.  Question 19 is ``Overall, how would you rate this instructor?''  Question 20 is ``Overall, how would you rate this course?''. The scores are out of 5 and the University average evaluation is approximately 4.1. 
+\input{Tables/teaching.tex}
+}}{}
+
+\ifthenelse{\boolean{Grants}}{
+\IfFileExists{Tables/grants.tex} {
+\section*{GRANTS}
+\input{Tables/grants.tex}
+}}{}
+
+\ifthenelse{\boolean{Proposals}}{
+\IfFileExists{Tables/proposals.tex} {
+\section*{PROPOSALS}
+\input{Tables/proposals.tex}
+}}{}
+

@@ -1,0 +1,163 @@
+\documentclass[10pt]{article}
+\pagestyle{empty}               % no page numbers, thanks.
+\usepackage{hyperref}
+\usepackage{ltablex}
+\usepackage{ifthen}
+\usepackage[tiny]{titlesec}
+\usepackage[backend=biber,style=numeric-comp,sorting=none,giveninits=true,maxnames=20]{biblatex}
+
+% Add bib file to make bibliography information
+\addbibresource{../Scholarship/scholarship.bib}
+
+% Set page size
+\textwidth = 6.5 in
+\textheight = 9 in
+\oddsidemargin = 0.0 in
+\evensidemargin = 0.0 in
+\topmargin = 0.0 in
+\headheight = 0.0 in
+\headsep = 0.0 in
+\parindent= 0 in  
+
+% Make sure tables always span the page width
+\keepXColumns
+% Remove annoying line space before table
+\setlength\LTpre{0in}
+% This puts a little extra space in the  tables
+\setlength{\extrarowheight}{2.5pt}
+% Add counter for rows of tables
+\newcounter{rowcnt}
+\newcommand\rownum{\ifnumequal{\value{rowcnt}}{0}{\#}{\therowcnt.}\stepcounter{rowcnt}}
+\AtEndEnvironment{tabularx}{\setcounter{rowcnt}{0}}
+
+% Allow text to be rough at the bottom for better page splits
+\raggedbottom
+
+% Change the section spacing for better headings
+%\titlespacing*{⟨command ⟩}{⟨left ⟩}{⟨before-sep ⟩}{⟨after-sep ⟩}
+\titlespacing*{\section}{0cm}{*2.5}{*0.5}
+
+% Commands to label graduate and undergraduate students
+\providecommand{\us}{\textsuperscript{*}}
+\providecommand{\gs}{\textsuperscript{+}}
+
+
+% Remove some fields from journal articles
+\AtEveryCitekey{\ifentrytype{article}{\clearfield{url}\clearfield{issn}\clearfield{review}\clearfield{series}\clearfield{eprint}}{}}
+\AtEveryCitekey{\ifentrytype{misc}{\clearfield{url}\clearfield{issn}\clearfield{review}\clearfield{series}\clearfield{eprint}}{}}
+
+% This adds the field citations to the bibliography data so I can add the number of citaitons
+\begin{filecontents}{biblatex-dm.cfg}
+\DeclareDatamodelFields[type=field, datatype=integer, nullok=true]{citations}
+\DeclareDatamodelEntryfields{citations}
+\end{filecontents}
+
+% Remove the "In" from journal citations
+\renewbibmacro*{in:}{%
+  \setunit{\addcomma\space}%
+  \ifentrytype{article}
+    {}
+    {\printtext{%
+       \bibstring{in}\intitlepunct}}}
+
+% Change volume, number format
+\renewbibmacro*{volume+number+eid}{%
+  \printfield{volume}%
+  \setunit*{\addcomma\addspace}%
+  \iffieldundef{number}{}{%
+  \printtext{no\adddot\addspace}%
+  }%
+  \printfield{number}%
+  \setunit{\addcomma\space}%
+  \printfield{eid}}
+ 
+ % This adds the number of citations in brackets 
+\renewbibmacro*{finentry}{
+\printfield{citations}%
+\finentry}
+\DeclareFieldFormat{citations}{\mkbibbrackets{#1}}
+
+\title{Faculty Activity Report}
+\author{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\IfFileExists{Tables/journal_far.tex} {
+\section{JOURNAL ARTICLES}
+\input{Tables/journal_far.tex}
+}
+
+\IfFileExists{Tables/refereed_far.tex} {
+\section{REFEREED CONFERENCE\\ PAPERS}
+\input{Tables/refereed_far.tex}
+}
+
+\IfFileExists{Tables/book_far.tex} {
+\section{BOOK CHAPTERS}
+\input{Tables/book_far.tex}
+}
+
+\IfFileExists{Tables/conference_far.tex} {
+\section{CONFERENCES}
+\input{Tables/conference_far.tex}
+}
+
+\IfFileExists{Tables/patent_far.tex} {
+\section{PATENTS}
+\input{Tables/patent_far.tex}
+}
+
+\IfFileExists{Tables/invited_far.tex} {
+\section{INVITED TALKS}
+\input{Tables/invited_far.tex}
+}
+
+\IfFileExists{Tables/personal_awards_far.tex} {
+\section{PERSONAL AWARDS}
+\input{Tables/personal_awards_far.tex}
+}
+
+\IfFileExists{Tables/student_awards_far.tex} {
+\section{STUDENT AWARDS}
+\input{Tables/student_awards_far.tex}
+}
+
+\IfFileExists{Tables/service_far.tex} {
+\section{SERVICE}
+\input{Tables/service_far.tex}
+}
+
+\IfFileExists{Tables/reviews_far.tex} {
+\section{REVIEWING}
+\input{Tables/reviews_far.tex}
+}
+
+\IfFileExists{Tables/thesis_far.tex} {
+\section{GRADUATE\\ ADVISEES}
+\input{Tables/thesis_far.tex}
+}
+
+\IfFileExists{Tables/undergraduate_research_far.tex} {
+\section{UNDERGRAD RESEARCH}
+\input{Tables/undergraduate_research_far.tex}
+}
+
+\IfFileExists{Tables/teaching_far.tex} {
+\section{TEACHING}
+\input{Tables/teaching_far.tex}
+}
+
+\IfFileExists{Tables/grants_far.tex} {
+\section{GRANTS}
+\input{Tables/grants_far.tex}
+}
+
+\IfFileExists{Tables/proposals_far.tex} {
+\section{PROPOSALS}
+\input{Tables/proposals_far.tex}
+}
+
+\end{document}
+
