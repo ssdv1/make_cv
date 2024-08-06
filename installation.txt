@@ -1,0 +1,6 @@
+rm dist/*
+vi pyproject.toml   # change version number
+python3 -m build
+python3 -m twine upload --repository testpypi dist/*
+pip uninstall make_cv
+python -m pip install --index-url https://test.pypi.org/simple/ make_cv==0.0.9

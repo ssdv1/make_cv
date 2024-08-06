@@ -14,6 +14,7 @@ import configparser
 import argparse
 
 from .create_config import create_config
+from .create_config import verify_cv_config
 from .publons2excel import publons2excel
 from .bib_add_citations import bib_add_citations
 from .bib_get_entries import bib_get_entries
@@ -276,7 +277,7 @@ def main(argv = None):
 # 		if argdict[file+'File'] is not None: config[file+'File'] = argdict[file+'File']
 # 		if argdict[file+'Folder'] is not None: config[file+'Folder'] = argdict[file+'Folder']
 		
-	ok = create_config.verify_cv_config(config)
+	ok = verify_cv_config(config)
 	if (not ok):
 		print("Incomplete or unreadable configuration file " +args.configfile +".\n") 
 		YN = input('Would you like to create a new configuration file named cv.cfg [Y/N]?')
