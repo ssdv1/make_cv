@@ -23,7 +23,7 @@ sections = {'Journal','Refereed','Book','Conference','Patent','Invited','Persona
 files = {'Scholarship','PersonalAwards','StudentAwards','Service','Reviews','CurrentGradAdvisees','GradTheses','UndergradResearch','Teaching','Proposals','Grants'} 
 
 
-def main(config):
+def make_cv(config):
 	# # Source is faculty folder
 	# if platform.system() == 'Windows':
 	# 	faculty_source = r"S:\departments\Mechanical & Aeronautical Engineering\Faculty"
@@ -196,7 +196,7 @@ def main(config):
 		except OSError as err:
 			print("")
 			
-if __name__ == "__main__":
+def main(argv = None):
 	parser = argparse.ArgumentParser(description='This script creates a cv using python and LaTeX plus provided data')
 	parser.add_argument('-f','--configfile', default='cv.cfg', help='the configuration file, default is cv.cfg')
 	parser.add_argument('-d','--data_dir', help='the name of root directory containing the data folders')
@@ -215,7 +215,10 @@ if __name__ == "__main__":
 	parser.add_argument('-M','--IncludeStudentMarkers', help='put student author markers in cv', choices=['true','false'])
 	parser.add_argument('-e','--exclude', help='exclude section from cv', choices=sections,action='append')
 	
-	args = parser.parse_args()
+	if argv is None:
+		args = parser.parse_args()
+	else:
+		args = parser.parse_args(argv)
 
 	configuration = configparser.ConfigParser()
 	configuration.read(args.configfile)
@@ -343,4 +346,8 @@ if __name__ == "__main__":
 		shutil.copyfile(filename,backupfile)
 		bib_add_keywords.main(backupfile,filename)
 		
-	main(config)
+	make_cv(config)
+
+
+if __name__ == "__main__":
+	main()

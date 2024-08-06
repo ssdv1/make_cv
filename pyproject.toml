@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "make_cv"
+version = "0.0.1"
+authors = [
+  { name="Brian Helenbrook", email="brian.helenbrook@gmail.com" },
+]
+description = "A package to make a faculty c.v. using python and LaTeX"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha"
+]
+dependencies = [
+  "pandas",
+  "openpyxl",
+  "bibtexparser",
+  "bibtexautocomplete"
+]
+
+[project.scripts]
+make_cv = "make_cv.src:main"
+
+[project.urls]
+Homepage = "https://github.com/bhelenbr/make_cv"
+Issues = "https://github.com/bhelenbr/make_cv/issues"
