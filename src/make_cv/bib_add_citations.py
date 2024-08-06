@@ -20,7 +20,7 @@ import argparse
 
 
 
-def main(bibfile,author_id,outputfile,scraper_id=None):
+def bib_add_citations(bibfile,author_id,outputfile,scraper_id=None):
 
 	# Set up a ProxyGenerator object to use free proxies
 	# This needs to be done only once per session
@@ -129,7 +129,7 @@ if __name__ == "__main__":
 		with open("google_id") as google_file:
 			args.author_id = google_file.readline().strip('\n\r')
 	
-	main(args.bibfile,args.author_id,args.output,args.scraperID)
+	bib_add_citations(args.bibfile,args.author_id,args.output,args.scraperID)
 	
 
 		

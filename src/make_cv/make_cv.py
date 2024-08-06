@@ -12,12 +12,25 @@ import platform
 import shutil
 import configparser
 import argparse
-import create_config
-import publons2excel
-import bib_add_citations
-import bib_get_entries
-import bib_add_student_markers
-import bib_add_keywords
+
+from .create_config import create_config
+from .publons2excel import publons2excel
+from .bib_add_citations import bib_add_citations
+from .bib_get_entries import bib_get_entries
+from .bib_add_student_markers import bib_add_student_markers
+from .bib_add_keywords import bib_add_keywords
+from .grants2latex_far import grants2latex_far
+from .props2latex_far import props2latex_far
+from .UR2latex import UR2latex
+from .bib2latex_far import bib2latex_far
+from .thesis2latex_far import thesis2latex_far
+from .personal_awards2latex import personal_awards2latex
+from .student_awards2latex import student_awards2latex
+from .service2latex import service2latex
+from .publons2latex import publons2latex
+from .teaching2latex import teaching2latex
+	
+	
 
 sections = {'Journal','Refereed','Book','Conference','Patent','Invited','PersonalAwards','StudentAwards','Service','Reviews','GradAdvisees','UndergradResearch','Teaching','Grants','Proposals'} 
 files = {'Scholarship','PersonalAwards','StudentAwards','Service','Reviews','CurrentGradAdvisees','GradTheses','UndergradResearch','Teaching','Proposals','Grants'} 
@@ -40,18 +53,6 @@ def make_cv(config):
 	# default to writing entire history
 	years = 0
 	
-	import grants2latex_far
-	import props2latex_far
-	import UR2latex
-	import bib2latex_far
-	import thesis2latex_far
-	import personal_awards2latex
-	import student_awards2latex
-	import service2latex
-	import publons2latex
-	import teaching2latex
-	import publons2excel
-	
 	if not os.path.exists('Tables'):
 		os.makedirs('Tables')
 	
@@ -61,7 +62,7 @@ def make_cv(config):
 	fpubs = [open('Tables' +os.sep +name, 'w') for name in pubfiles]
 	filename = faculty_source +os.sep +config['ScholarshipFolder'] +os.sep +config['ScholarshipFile']
 	if os.path.isfile(filename):
-		nrecords = bib2latex_far.main(fpubs,years,filename)
+		nrecords = bib2latex_far(fpubs,years,filename)
 		for counter in range(len(pubfiles)):
 			fpubs[counter].close()
 			if not(nrecords[counter]):
@@ -72,7 +73,7 @@ def make_cv(config):
 		print('Updating personal awards table')
 		fpawards = open('Tables' +os.sep +'personal_awards.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['PersonalAwardsFolder'] +os.sep +config['PersonalAwardsFile']
-		nrows = personal_awards2latex.main(fpawards,years,filename)
+		nrows = personal_awards2latex(fpawards,years,filename)
 		fpawards.close()
 		if not(nrows):
 			os.remove('Tables'+os.sep +'personal_awards.tex')
@@ -82,7 +83,7 @@ def make_cv(config):
 		print('Updating student awards table')
 		fsawards = open('Tables' +os.sep +'student_awards.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['StudentAwardsFolder'] +os.sep +config['StudentAwardsFile']
-		nrows = student_awards2latex.main(fsawards,years,filename)	
+		nrows = student_awards2latex(fsawards,years,filename)	
 		fsawards.close()
 		if not(nrows):
 			os.remove('Tables'+os.sep +'student_awards.tex')
@@ -92,7 +93,7 @@ def make_cv(config):
 		print('Updating service table')
 		fservice = open('Tables' +os.sep +'service.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['ServiceFolder'] +os.sep +config['ServiceFile']
-		nrows = service2latex.main(fservice,years,filename)	
+		nrows = service2latex(fservice,years,filename)	
 		fservice.close()
 		if not(nrows):
 			os.remove('Tables'+os.sep +'service.tex')
@@ -101,7 +102,7 @@ def make_cv(config):
 		print('Updating reviews table')
 		freviews = open('Tables' +os.sep +'reviews.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['ReviewsFolder'] +os.sep +config['ReviewsFile']
-		nrows = publons2latex.main(freviews,years,filename)
+		nrows = publons2latex(freviews,years,filename)
 		freviews.close()
 		if not(nrows):
 			os.remove('Tables'+os.sep +'reviews.tex')
@@ -112,7 +113,7 @@ def make_cv(config):
 		fthesis = open('Tables' +os.sep +'thesis.tex', 'w') # file to write
 		filename1 = faculty_source +os.sep +config['CurrentGradAdviseesFolder'] +os.sep +config['CurrentGradAdviseesFile']
 		filename2 = faculty_source +os.sep +config['GradThesesFolder'] +os.sep +config['GradThesesFile']
-		nrows = thesis2latex_far.main(fthesis,years,filename1,filename2)
+		nrows = thesis2latex_far(fthesis,years,filename1,filename2)
 		fthesis.close()
 		if not(nrows):
 			os.remove('Tables'+os.sep +'thesis.tex')
@@ -122,7 +123,7 @@ def make_cv(config):
 		print('Updating undergraduate research table')
 		fur = open('Tables' +os.sep +'undergraduate_research.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['UndergradResearchFolder'] +os.sep +config['UndergradResearchFile']
-		nrows = UR2latex.main(fur,years,filename)	
+		nrows = UR2latex(fur,years,filename)	
 		fur.close()
 		if not(nrows):
 			os.remove('Tables' +os.sep +'undergraduate_research.tex')
@@ -132,7 +133,7 @@ def make_cv(config):
 		print('Updating teaching table')
 		fteaching = open('Tables' +os.sep +'teaching.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['TeachingFolder'] +os.sep +config['TeachingFile']
-		nrows = teaching2latex.main(fteaching,years,filename)	
+		nrows = teaching2latex(fteaching,years,filename)	
 		fteaching.close()
 		if not(nrows):
 			os.remove('Tables'+os.sep +'teaching.tex')
@@ -141,7 +142,7 @@ def make_cv(config):
 		print('updating grants table')
 		fgrants = open('Tables' +os.sep +'grants.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['GrantsFolder'] +os.sep +config['GrantsFile']
-		nrows = grants2latex_far.main(fgrants,years,filename)
+		nrows = grants2latex_far(fgrants,years,filename)
 		fgrants.close()
 		if not(nrows):
 			os.remove('Tables' +os.sep +'grants.tex')
@@ -151,7 +152,7 @@ def make_cv(config):
 		print('updating proposals table')
 		fprops = open('Tables' +os.sep +'proposals.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['ProposalsFolder'] +os.sep +config['ProposalsFile']
-		nrows = props2latex_far.main(fprops,years,filename)	
+		nrows = props2latex_far(fprops,years,filename)	
 		fprops.close()
 		if not(nrows):
 			os.remove('Tables' +os.sep +'proposals.tex')
@@ -291,7 +292,7 @@ def main(argv = None):
 		print('Converting json file')
 		filename = faculty_source +os.sep +config['ReviewsFolder'] +os.sep +config['ReviewsFile']
 		json = faculty_source +os.sep +config['ReviewsFolder'] +os.sep +config['ReviewsFileJSON']
-		publons2excel.main(json,filename)
+		publons2excel(json,filename)
 		
 	if config['UseScraper'] == 'false':
 		scraperID = None
@@ -307,7 +308,7 @@ def main(argv = None):
 		filename = faculty_source +os.sep +config['ScholarshipFolder'] +os.sep +config['ScholarshipFile']
 		backupfile = faculty_source +os.sep +config['ScholarshipFolder'] +os.sep +'backup1.bib'
 		shutil.copyfile(filename,backupfile)
-		bib_get_entries.main(backupfile,config['GoogleID'],1,filename,scraperID)
+		bib_get_entries(backupfile,config['GoogleID'],1,filename,scraperID)
 		
 	# add/update citations counts in .bib file	
 	if config.getboolean('UpdateCitations'):
@@ -318,7 +319,7 @@ def main(argv = None):
 		filename = faculty_source +os.sep +config['ScholarshipFolder'] +os.sep +config['ScholarshipFile']
 		backupfile = faculty_source +os.sep +config['ScholarshipFolder'] +os.sep +'backup2.bib'
 		shutil.copyfile(filename,backupfile)
-		bib_add_citations.main(backupfile,config['GoogleID'],filename,scraperID)
+		bib_add_citations(backupfile,config['GoogleID'],filename,scraperID)
 		
 	# add/update citations counts in .bib file	
 	if config.getboolean('UpdateStudentMarkers'):
@@ -329,7 +330,7 @@ def main(argv = None):
 		cur_grads = faculty_source +os.sep +config['CurrentGradAdviseesFolder'] +os.sep +config['CurrentGradAdviseesFile']
 		gradfile = faculty_source +os.sep +config['GradThesesFolder'] +os.sep +config['GradThesesFile']
 		ugradfile = faculty_source +os.sep +config['UndergradResearchFolder'] +os.sep +config['UndergradResearchFile']
-		bib_add_student_markersmain(100,ugradfile,gradfile,cur_grads,backupfile,filename)
+		bib_add_student_marker(100,ugradfile,gradfile,cur_grads,backupfile,filename)
 		
 	if config.getboolean('SearchForDOIs'):
 		filename = faculty_source +os.sep +config['ScholarshipFolder'] +os.sep +config['ScholarshipFile']
@@ -344,7 +345,7 @@ def main(argv = None):
 		print('Checking for .bib entries that are missing type specifiers')
 		backupfile = faculty_source +os.sep +config['ScholarshipFolder'] +os.sep +'backup4.bib'
 		shutil.copyfile(filename,backupfile)
-		bib_add_keywords.main(backupfile,filename)
+		bib_add_keywords(backupfile,filename)
 		
 	make_cv(config)
 

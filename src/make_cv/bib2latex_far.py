@@ -24,7 +24,7 @@ def getyear(paperbibentry):
 		return(int(paperbibentry["date"][:4]))
 	return(0)
 
-def main(f,years,inputfile):
+def bib2latex_far(f,years,inputfile):
 
 	nrecord = np.zeros(len(categories))
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 	
 	f = [open(args.outputpath +os.sep +etype+args.ending+".tex", args.append) for count,etype in  enumerate(categories)]	
-	necord = main(f,args.years,args.inputfile)
+	necord = bib2latex_far(f,args.years,args.inputfile)
 	
 	for count,etype in enumerate(categories):
 		f[count].close()

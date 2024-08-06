@@ -9,11 +9,12 @@ import datetime as dt
 import pandas as pd
 import os
 import sys
-from stringprotect import str2latex
-from stringprotect import abbreviate_name
 import argparse
 
-def main(f,years,studentfile,thesisfile):
+from .stringprotect import str2latex
+from .stringprotect import abbreviate_name
+
+def thesis2latex_far(f,years,studentfile,thesisfile):
 	try:
 		source = pd.read_excel(studentfile,sheet_name="Data",parse_dates=['Start Date'])
 		student_found = True
@@ -80,7 +81,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 	
 	f = open(args.outputfile, args.append) # file to write
-	nrows = main(f,args.years,args.studentfile,args.thesisfile)
+	nrows = thesis2latex_far(f,args.years,args.studentfile,args.thesisfile)
 	f.close()
 	
 	if (nrows == 0):

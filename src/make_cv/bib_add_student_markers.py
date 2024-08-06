@@ -13,12 +13,13 @@ from bibtexparser.bwriter import BibTexWriter
 from bibtexparser.bibdatabase import BibDatabase
 from bibtexparser.customization import convert_to_unicode
 from bibtexparser.bparser import BibTexParser
-from stringprotect import abbreviate_name
-from stringprotect import split_names
-from stringprotect import first_last
 import argparse
 import pandas as pd
 import datetime
+
+from .stringprotect import abbreviate_name
+from .stringprotect import split_names
+from .stringprotect import first_last
 
 def getyear(paperbibentry):
 	if "year" in paperbibentry.keys(): 
@@ -27,7 +28,7 @@ def getyear(paperbibentry):
 		return(int(paperbibentry["date"][:4]))
 	return(0)
 
-def main(years,ugrads,grads,cur_grad,bibfile,outputfile):
+def bib_add_student_markers(years,ugrads,grads,cur_grad,bibfile,outputfile):
 	try:
 		cur_grad_names = pd.read_excel(cur_grad,sheet_name="Data",parse_dates=['Start Date'])
 		cur_grad_found = True
@@ -124,7 +125,7 @@ if __name__ == "__main__":
 	parser.add_argument('bibfile',help='the .bib file to add the markers to')
 	args = parser.parse_args()
 	
-	main(args.years,args.ugradfile,args.gradfile,args.cur_grads,args.bibfile,args.output)
+	bib_add_student_markers(args.years,args.ugradfile,args.gradfile,args.cur_grads,args.bibfile,args.output)
 
 		
 		

@@ -17,7 +17,7 @@ import argparse
 from datetime import date
 import sys
 
-from bib_add_keywords import add_keyword
+from .bib_add_keywords import add_keyword
 
 # pip3 install scholarly
 # pip3 uninstall urllib3
@@ -30,7 +30,7 @@ def getyear(paperbibentry):
 		return(int(paperbibentry["date"][:4]))
 	return(0)
 
-def main(bibfile,author_id,years,outputfile,scraper_id=None):
+def bib_get_entries(bibfile,author_id,years,outputfile,scraper_id=None):
 
 	newentries = []
 	
@@ -199,7 +199,7 @@ if __name__ == "__main__":
 		with open("google_id") as google_file:
 			args.author_id = google_file.readline().strip('\n\r')
 		
-	main(args.bibfile,args.author_id,args.years,args.output,args.scraperID)
+	bib_get_entries(args.bibfile,args.author_id,args.years,args.output,args.scraperID)
 	
 
 		

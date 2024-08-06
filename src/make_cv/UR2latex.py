@@ -7,10 +7,11 @@ import datetime
 import pandas as pd
 import os
 import sys
-from stringprotect import str2latex
-from stringprotect import abbreviate_name_list
 
-def main(f,years,inputfile):
+from .stringprotect import str2latex
+from .stringprotect import abbreviate_name_list
+
+def UR2latex(f,years,inputfile):
 	source = inputfile # file to read
 	try:
 		df = pd.read_excel(source,sheet_name="Data")
@@ -59,7 +60,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 	
 	f = open(args.outputfile, args.append) # file to write
-	nrows = main(f,args.years,args.inputfile)
+	nrows = UR2latex(f,args.years,args.inputfile)
 	f.close()
 	
 	if (nrows == 0):

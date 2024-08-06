@@ -4,11 +4,13 @@
 import pandas as pd
 import os
 import sys
-from stringprotect import str2latex
 from datetime import date
 import argparse
 
-def main(f,years,inputfile):
+from .stringprotect import str2latex
+
+
+def grants2latex_far(f,years,inputfile):
 	try:
 		props = pd.read_excel(inputfile,header=0)
 	except OSError:
@@ -60,7 +62,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 	
 	f = open(args.outputfile, args.append) # file to write
-	nrows = main(f,args.years,args.inputfile)
+	nrows = grants2latex_far(f,args.years,args.inputfile)
 	f.close()
 	
 	if (nrows == 0):

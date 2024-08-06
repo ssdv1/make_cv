@@ -10,10 +10,11 @@ import pandas as pd
 import os
 import sys
 from datetime import date
-from stringprotect import str2latex
 import argparse
 
-def main(f,years,inputfile):
+from .stringprotect import str2latex
+
+def publons2latex_far(f,years,inputfile):
 	source = inputfile  # file to read
 	try:
 		reviews = pd.read_excel(source,header=0)
@@ -51,7 +52,7 @@ if __name__ == "__main__":
 	parser.add_argument('outputfile',help='the output latex table name')
 	args = parser.parse_args()
 	
-	f = open(args.outputfile, args.append) # file to write
+	f = publons2latex_far(args.outputfile, args.append) # file to write
 	nrows = main(f,args.years,args.inputfile)
 	f.close()
 	

@@ -91,7 +91,7 @@ def add_keyword(paperbibentry):
 				paperbibentry["keywords"] = keyword
 
 
-def main(bibfile,outputfile):
+def bib_add_keywords(bibfile,outputfile):
 	# homogenize_fields: Sanitize BibTeX field names, for example change `url` to `link` etc.
 	tbparser = BibTexParser(common_strings=True)
 	tbparser.homogenize_fields = False  # no dice
@@ -132,4 +132,4 @@ if __name__ == "__main__":
 	parser.add_argument('-o', '--output',default="scholarship1.bib",help='the name of the output file')
 	parser.add_argument('bibfile',help='the .bib file to add the markers to')
 	args = parser.parse_args()
-	main(args.bibfile,args.output)
+	bib_add_keywords(args.bibfile,args.output)

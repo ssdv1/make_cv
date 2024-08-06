@@ -12,7 +12,7 @@ import shutil
 from datetime import datetime
 import argparse
 
-def main(inputfile,outputfile):
+def publons2excel(inputfile,outputfile):
 	json_dir = os.path.dirname(inputfile)
 
 	try:
@@ -54,7 +54,7 @@ if __name__ == "__main__":
 	parser.add_argument('inputfile',help='the input json file name') 
 	parser.add_argument('outputfile',default="reviews data.xlsx",help='the output file name')          
 	args = parser.parse_args()
-	main(args.inputfile,args.outputfile)
+	publons2excel(args.inputfile,args.outputfile)
 
 
 

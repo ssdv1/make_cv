@@ -7,11 +7,13 @@
 import pandas as pd
 import os
 import sys
-from stringprotect import str2latex
 import datetime as dt
 import argparse
 
-def main(f,years,inputfile):
+from .stringprotect import str2latex
+
+
+def props2latex_far(f,years,inputfile):
 	source = inputfile # file to read
 	try:
 		# props = pd.read_excel(source,header=0,dtype={'Name.1':str,'Long Descr':str,'Allocated Amt':float,'Total Cost':float,'PRO_BGN_DT':dt.datetime,'PRO_END_DT':dt.datetime})
@@ -55,7 +57,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 	
 	f = open(args.outputfile, args.append) # file to write
-	nrows = main(f,args.years,args.inputfile)
+	nrows = props2latex_far(f,args.years,args.inputfile)
 	f.close()
 	
 	if nrows == 0:
