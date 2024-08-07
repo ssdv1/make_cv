@@ -10,6 +10,7 @@ import pandas as pd
 import os
 import sys
 from datetime import datetime
+from datetime import date
 
 from .stringprotect import str2latex
 

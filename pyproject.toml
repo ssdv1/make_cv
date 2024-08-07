@@ -27,9 +27,21 @@ dependencies = [
 [project.scripts]
 make_cv = "make_cv.make_cv:main"
 
+
+
 [project.urls]
 Homepage = "https://github.com/bhelenbr/make_cv"
 Issues = "https://github.com/bhelenbr/make_cv/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/make_cv","files/"]
+
+# [tool.hatch.build.targets.sdist]
+# include = [
+#   "pkg/*.py",
+#   "/tests",
+# ]
+# exclude = [
+#   "*.json",
+#   "pkg/_compat.py",
+# ]

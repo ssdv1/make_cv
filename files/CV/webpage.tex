@@ -1,0 +1,56 @@
+\documentclass[10pt]{article}
+\pagestyle{empty}               % no page numbers, thanks.
+\usepackage{marginnote}
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{ltablex}
+\usepackage{longtable}
+\usepackage[backend=biber,style=numeric-comp,sorting=none,giveninits=true,maxnames=20]{biblatex}
+\addbibresource{../Scholarship/scholarship.bib}
+
+% To compile this
+% mk4ht htlatex wepbage.tex 'xhtml,charset=utf-8,pmathml' ' -cunihtf -utf8 -cvalidate'
+% biber webpage.bcf
+% mk4ht htlatex wepbage.tex 'xhtml,charset=utf-8,pmathml' ' -cunihtf -utf8 -cvalidate'
+
+
+\textwidth = 5.70 in
+\textheight = 9 in
+\oddsidemargin = 0.75 in
+\evensidemargin = 0.0 in
+\topmargin = 0.0 in
+\headheight = 0.0 in
+\headsep = 0.0 in
+\parindent= 0 in  
+\marginparwidth = 1.25 in
+%\marginparsep = +0.25in
+
+\keepXColumns
+
+% Remove some fields from journal articles
+\AtEveryCitekey{\ifentrytype{article}{\clearfield{url}\clearfield{issn}\clearfield{review}\clearfield{series}\clearfield{eprint}}{}}
+\AtEveryCitekey{\ifentrytype{misc}{\clearfield{url}\clearfield{issn}\clearfield{review}\clearfield{series}\clearfield{eprint}}{}}
+
+
+\begin{document}
+\reversemarginpar               % this puts the margin notes on the
+                                % left-hand side of the resume.
+          
+% Category command
+\newenvironment{category}[1]{
+\par
+\vspace{\baselineskip}
+\marginnote{\raggedleft {\bf #1}}}{}
+
+% Sideyear command (not used currently)
+\newcommand{\sideyear}[1] {\marginnote{#1}}
+
+% For word compatible file
+%\newenvironment{category}[1]{\vspace{0.1in}{\bf #1}\\}{}
+%\newcommand{\sideyear}[1] {}
+
+
+\input{Tables/journal.tex}
+
+\end{document}
+

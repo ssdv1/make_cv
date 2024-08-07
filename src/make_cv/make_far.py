@@ -1,152 +1,140 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python
 # Script to create cv
 # must be executed from Faculty/CV folder
 # script folder must be in path
 
 import os
 import sys
+import subprocess
 import glob
 import pandas as pd
 import platform
 import shutil
+import configparser
+import argparse
 
-# Source is faculty folder
-if platform.system() == 'Windows':
-	faculty_source = r"S:\departments\Mechanical & Aeronautical Engineering\Faculty"
-	gathered_source = r"S:\departments\Mechanical & Aeronautical Engineering\Confidential Information\Department Data"
-	sys.path.insert(0, r"S:\departments\Mechanical & Aeronautical Engineering\Faculty\_Scripts")	
-else:
-	faculty_source = r"/Volumes/Mechanical & Aerospace Engineering/Faculty"
-	gathered_source = r"/Volumes/Mechanical & Aerospace Engineering/Confidential Information/Department Data"
-	sys.path.insert(0, r"/Volumes/Mechanical & Aerospace Engineering/Faculty/_Scripts")
+from .create_config import create_config
+from .create_config import verify_config
+from .publons2excel import publons2excel
+from .bib_add_citations import bib_add_citations
+from .bib_get_entries import bib_get_entries
+from .bib_add_student_markers import bib_add_student_markers
+from .bib_add_keywords import bib_add_keywords
 
-# override faculty source to be relative to CV folder
-faculty_source = ".."
+from .make_cv import make_cv_tables
+from .make_cv import typeset
+from .make_cv import add_default_args
+from .make_cv import process_default_args
 
-import grants2latex_far
-import props2latex_far
-import UR2latex_far
-import bib2latex_far
-import thesis2latex_far
-import personal_awards2latex_far
-import student_awards2latex_far
-import service2latex_far
-import publons2latex_far
-import teaching2latex_far
-
-years = 3
-
-if not os.path.exists('Tables'):
-	os.makedirs('Tables')
-		
-# open files
-fgrants = open('Tables' +os.sep +'grants_far.tex', 'w') # file to write
-fprops = open('Tables' +os.sep +'proposals_far.tex', 'w') # file to write
-fur = open('Tables' +os.sep +'undergraduate_research_far.tex', 'w') # file to write
-pubfiles = ["journal_far.tex","conference_far.tex","patent_far.tex","book_far.tex","invited_far.tex","refereed_far.tex"]
-fpubs = [open('Tables' +os.sep +name, 'w') for name in pubfiles]
-fthesis = open('Tables' +os.sep +'thesis_far.tex', 'w') # file to write
-fpawards = open('Tables' +os.sep +'personal_awards_far.tex', 'w') # file to write
-fsawards = open('Tables' +os.sep +'student_awards_far.tex', 'w') # file to write
-fservice = open('Tables' +os.sep +'service_far.tex', 'w') # file to write
-freviews = open('Tables' +os.sep +'reviews_far.tex', 'w') # file to write
-fteaching = open('Tables' +os.sep +'teaching_far.tex', 'w') # file to write
+from .UR2latex_far import UR2latex_far
+from .personal_awards2latex_far import personal_awards2latex_far
+from .student_awards2latex_far import student_awards2latex_far
+from .service2latex_far import service2latex_far
+from .publons2latex_far import publons2latex_far
+from .teaching2latex_far import teaching2latex_far
 	
+
+sections = {'Journal','Refereed','Book','Conference','Patent','Invited','PersonalAwards','StudentAwards','Service','Reviews','GradAdvisees','UndergradResearch','Teaching','Grants','Proposals'} 
+files = {'Scholarship','PersonalAwards','StudentAwards','Service','Reviews','CurrentGradAdvisees','GradTheses','UndergradResearch','Teaching','Proposals','Grants'} 
+
+
+def make_far_tables(config,table_dir):
+	# default to writing entire history
+	years = config.getint('years')
 	
-# Grants
-filename = faculty_source +os.sep +"Proposals & Grants" +os.sep +"proposals & grants.xlsx"
-nrows = grants2latex_far.main(fgrants,years,filename)
-fgrants.close()
-if not(nrows):
-	os.remove('Tables' +os.sep +'grants_far.tex')
-
-# Proposals
-nrows = props2latex_far.main(fprops,years,filename)	
-fprops.close()
-if not(nrows):
-	os.remove('Tables' +os.sep +'proposals_far.tex')
-
-# Undergraduate Research
-filename = faculty_source +os.sep +"Service" +os.sep +'undergraduate research data.xlsx'
-nrows = UR2latex_far.main(fur,years,filename)	
-fur.close()
-if not(nrows):
-	os.remove('Tables' +os.sep +'undergraduate_research_far.tex')
-
-# Scholarly Works
-filename = faculty_source +os.sep +"Scholarship" +os.sep +'scholarship.bib'
-if os.path.isfile(filename):
-	nrecords = bib2latex_far.main(fpubs,years,filename)
-	for counter in range(len(pubfiles)):
-		fpubs[counter].close()
-		if not(nrecords[counter]):
-			os.remove('Tables'+os.sep +pubfiles[counter])
-
-# Thesis Publications & Graduate Advisees
-filename1 = faculty_source +os.sep +"Scholarship" +os.sep +'current student data.xlsx'
-filename2 = faculty_source +os.sep +"Scholarship" +os.sep +'thesis data.xlsx'
-nrows = thesis2latex_far.main(fthesis,years,filename1,filename2)
-fthesis.close()
-if not(nrows):
-	os.remove('Tables'+os.sep +'thesis_far.tex')
-
-# Personal Awards
-filename = faculty_source +os.sep +"Awards" +os.sep +'personal awards data.xlsx'
-nrows = personal_awards2latex_far.main(fpawards,years,filename)
-fpawards.close()
-if not(nrows):
-	os.remove('Tables'+os.sep +'personal_awards_far.tex')
-
-# Student Awards
-filename = faculty_source +os.sep +"Awards" +os.sep +'student awards data.xlsx'
-nrows = student_awards2latex_far.main(fsawards,years,filename)	
-fsawards.close()
-if not(nrows):
-	os.remove('Tables'+os.sep +'student_awards_far.tex')
-
-# Service Activities
-filename = faculty_source +os.sep +"Service" +os.sep +'service data.xlsx'
-nrows = service2latex_far.main(fservice,years,filename)	
-fservice.close()
-if not(nrows):
-	os.remove('Tables'+os.sep +'service_far.tex')
-
-# Reviewing Activities
-filename = faculty_source +os.sep +"Service" +os.sep +'reviews data.xlsx'
-nrows = publons2latex_far.main(freviews,years,filename)
-freviews.close()
-if not(nrows):
-	os.remove('Tables'+os.sep +'reviews_far.tex')
+	make_cv_tables(config,table_dir,years)
 	
-# Teaching
-filename = faculty_source +os.sep +"Teaching" +os.sep +'teaching evaluation data.xlsx'
-nrows = teaching2latex_far.main(fteaching,years,filename)	
-fteaching.close()
-if not(nrows):
-	os.remove('Tables'+os.sep +'teaching_far.tex')
+	# override faculty source to be relative to CV folder
+	faculty_source = config['data_dir']
 
-import subprocess
+	# Personal Awards
+	if config.getboolean('PersonalAwards'):
+		print('Updating personal awards table')
+		fpawards = open(table_dir +os.sep +'personal_awards.tex', 'w') # file to write
+		filename = faculty_source +os.sep +config['PersonalAwardsFolder'] +os.sep +config['PersonalAwardsFile']
+		nrows = personal_awards2latex_far(fpawards,years,filename)
+		fpawards.close()
+		if not(nrows):
+			os.remove(table_dir+os.sep +'personal_awards.tex')
+	
+	# Student Awards
+	if config.getboolean('StudentAwards'):
+		print('Updating student awards table')
+		fsawards = open(table_dir +os.sep +'student_awards.tex', 'w') # file to write
+		filename = faculty_source +os.sep +config['StudentAwardsFolder'] +os.sep +config['StudentAwardsFile']
+		nrows = student_awards2latex_far(fsawards,years,filename)	
+		fsawards.close()
+		if not(nrows):
+			os.remove(table_dir+os.sep +'student_awards.tex')
+	
+	# Service Activities
+	if config.getboolean('Service'):
+		print('Updating service table')
+		fservice = open(table_dir +os.sep +'service.tex', 'w') # file to write
+		filename = faculty_source +os.sep +config['ServiceFolder'] +os.sep +config['ServiceFile']
+		nrows = service2latex_far(fservice,years,filename)	
+		fservice.close()
+		if not(nrows):
+			os.remove(table_dir+os.sep +'service.tex')
+	
+	if config.getboolean('Reviews'):
+		print('Updating reviews table')
+		freviews = open(table_dir +os.sep +'reviews.tex', 'w') # file to write
+		filename = faculty_source +os.sep +config['ReviewsFolder'] +os.sep +config['ReviewsFile']
+		nrows = publons2latex_far(freviews,years,filename)
+		freviews.close()
+		if not(nrows):
+			os.remove(table_dir+os.sep +'reviews.tex')
+	
+	# Undergraduate Research
+	if config.getboolean('UndergradResearch'):
+		print('Updating undergraduate research table')
+		fur = open(table_dir +os.sep +'undergraduate_research.tex', 'w') # file to write
+		filename = faculty_source +os.sep +config['UndergradResearchFolder'] +os.sep +config['UndergradResearchFile']
+		nrows = UR2latex_far(fur,years,filename)	
+		fur.close()
+		if not(nrows):
+			os.remove(table_dir +os.sep +'undergraduate_research.tex')
+	
+	# Teaching
+	if config.getboolean('Teaching'):
+		print('Updating teaching table')
+		fteaching = open(table_dir +os.sep +'teaching.tex', 'w') # file to write
+		filename = faculty_source +os.sep +config['TeachingFolder'] +os.sep +config['TeachingFile']
+		nrows = teaching2latex_far(fteaching,years,filename)	
+		fteaching.close()
+		if not(nrows):
+			os.remove(table_dir+os.sep +'teaching.tex')
 
-#subprocess.run(["pdflatex", "far.tex"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT) 
-subprocess.run(["pdflatex", "far.tex"]) 
-subprocess.run(["biber", "far.bcf"]) 
-subprocess.run(["pdflatex", "far.tex"],stdout=subprocess.DEVNULL,
-    stderr=subprocess.STDOUT) 
-print("trying to delete far.pdf file.  If this gets stuck, delete far.pdf yourself and it should continue")
-print("If it doesn't continue after that, hit ctrl-c, delete cv.pdf and try again")
-while True:
-    try:
-        os.remove("far.pdf")
-        break
-    except OSError as err:
-        continue
-subprocess.run(["pdflatex", "far.tex"]) 
+def main(argv = None):
+	parser = argparse.ArgumentParser(description='This script creates a far using python and LaTeX plus provided data')
+	add_default_args(parser)
+	
+	parser.add_argument('-y','--years', help='number of years to include in far',type=int)
 
-# cleanup
-for file in ["far.aux","far.bbl","far.bcf","far.blg","far.log","far.out","far.run.xml","far.toc","biblatex-dm.cfg"]:
-	try:
-		os.remove(file)
-	except OSError as err:
-		print("")
+	if argv is None:
+		args = parser.parse_args()
+	else:
+		args = parser.parse_args(argv)
 
+	configuration = configparser.ConfigParser()
+	configuration.read(args.configfile)
+	
+	ok = verify_config(configuration)
+	if (not ok):
+		print("Incomplete or unreadable configuration file " +args.configfile +".\n") 
+		YN = input('Would you like to create a new configuration file named cv.cfg [Y/N]?')
+		if YN == 'Y':
+			create_config.create_config('cv.cfg')
+		exit()
+	
+	config = configuration['FAR']
+	process_default_args(config,args)
+	if args.years is not None: config['Years'] = args.years
+
+	make_far_tables(config,'Tables_far')
+	typeset(config,'xelatex','far')
+
+if __name__ == "__main__":
+	main()
 

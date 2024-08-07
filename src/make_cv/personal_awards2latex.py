@@ -7,6 +7,7 @@
 import pandas as pd
 import os
 import sys
+from datetime import date
 
 from .stringprotect import str2latex
 
@@ -23,8 +24,9 @@ def personal_awards2latex(f,years,inputfile):
 		year = today.year
 		begin_year = year - years
 		source_data = source_data[(source_data['Year'] >= begin_year)]
-		source_data.reset_index(inplace=True)
-	
+		if source_data.shape[0] == 0:
+			return(0)
+			
 	#table = source_data.pivot_table(columns=['Year'], values=['Year'], index=['Type', 'Title'], aggfunc={'Year': 'count'},observed=False)
 
 

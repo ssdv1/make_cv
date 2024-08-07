@@ -2,3 +2,4 @@
 PyPITest_tokens.txt
 PyPI_tokens.txt
 dist/
+*.pyc

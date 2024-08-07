@@ -1,81 +1,4 @@
-\documentclass[10pt]{article}
-\pagestyle{empty}               % no page numbers, thanks.
-\usepackage{hyperref}
-\usepackage{ltablex}
-\usepackage{ifthen}
-\usepackage[tiny]{titlesec}
-\usepackage[backend=biber,style=numeric-comp,sorting=none,giveninits=true,maxnames=20]{biblatex}
-
-% Add bib file to make bibliography information
-\addbibresource{../Scholarship/scholarship.bib}
-
-% Set page size
-\textwidth = 6.5 in
-\textheight = 9 in
-\oddsidemargin = 0.0 in
-\evensidemargin = 0.0 in
-\topmargin = 0.0 in
-\headheight = 0.0 in
-\headsep = 0.0 in
-\parindent= 0 in  
-
-% Make sure tables always span the page width
-\keepXColumns
-% Remove annoying line space before table
-\setlength\LTpre{0in}
-% This puts a little extra space in the  tables
-\setlength{\extrarowheight}{2.5pt}
-% Add counter for rows of tables
-\newcounter{rowcnt}
-\newcommand\rownum{\ifnumequal{\value{rowcnt}}{0}{\#}{\therowcnt.}\stepcounter{rowcnt}}
-\AtEndEnvironment{tabularx}{\setcounter{rowcnt}{0}}
-
-% Allow text to be rough at the bottom for better page splits
-\raggedbottom
-
-% Change the section spacing for better headings
-%\titlespacing*{⟨command ⟩}{⟨left ⟩}{⟨before-sep ⟩}{⟨after-sep ⟩}
-\titlespacing*{\section}{0cm}{*2.5}{*0.5}
-
-% Commands to label graduate and undergraduate students
-\providecommand{\us}{\textsuperscript{*}}
-\providecommand{\gs}{\textsuperscript{+}}
-
-
-% Remove some fields from journal articles
-\AtEveryCitekey{\ifentrytype{article}{\clearfield{url}\clearfield{issn}\clearfield{review}\clearfield{series}\clearfield{eprint}}{}}
-\AtEveryCitekey{\ifentrytype{misc}{\clearfield{url}\clearfield{issn}\clearfield{review}\clearfield{series}\clearfield{eprint}}{}}
-
-% This adds the field citations to the bibliography data so I can add the number of citaitons
-\begin{filecontents}{biblatex-dm.cfg}
-\DeclareDatamodelFields[type=field, datatype=integer, nullok=true]{citations}
-\DeclareDatamodelEntryfields{citations}
-\end{filecontents}
-
-% Remove the "In" from journal citations
-\renewbibmacro*{in:}{%
-  \setunit{\addcomma\space}%
-  \ifentrytype{article}
-    {}
-    {\printtext{%
-       \bibstring{in}\intitlepunct}}}
-
-% Change volume, number format
-\renewbibmacro*{volume+number+eid}{%
-  \printfield{volume}%
-  \setunit*{\addcomma\addspace}%
-  \iffieldundef{number}{}{%
-  \printtext{no\adddot\addspace}%
-  }%
-  \printfield{number}%
-  \setunit{\addcomma\space}%
-  \printfield{eid}}
- 
- % This adds the number of citations in brackets 
-\renewbibmacro*{finentry}{
-\printfield{citations}%
-\finentry}
-\DeclareFieldFormat{citations}{\mkbibbrackets{#1}}
+\input{cv_header.tex}
 
 \title{Faculty Activity Report}
 \author{}
@@ -84,80 +7,97 @@
 \maketitle
 \tableofcontents
 
-\IfFileExists{Tables/journal_far.tex} {
+\ifthenelse{\boolean{Journal}}{
+\IfFileExists{Tables_far/journal.tex} {
 \section{JOURNAL ARTICLES}
-\input{Tables/journal_far.tex}
-}
+\input{Tables_far/journal.tex}
+}}{}
 
-\IfFileExists{Tables/refereed_far.tex} {
-\section{REFEREED CONFERENCE\\ PAPERS}
-\input{Tables/refereed_far.tex}
-}
+\ifthenelse{\boolean{Refereed}}{
+\IfFileExists{Tables_far/refereed.tex} {
+\section{REFEREED CONFERENCE PAPERS}
+\input{Tables_far/refereed.tex}
+}}{}
 
-\IfFileExists{Tables/book_far.tex} {
+\ifthenelse{\boolean{Book}}{
+\IfFileExists{Tables_far/book.tex} {
 \section{BOOK CHAPTERS}
-\input{Tables/book_far.tex}
-}
+\input{Tables_far/book.tex}
+}}{}
 
-\IfFileExists{Tables/conference_far.tex} {
+\ifthenelse{\boolean{Conference}}{
+\IfFileExists{Tables_far/conference.tex} {
 \section{CONFERENCES}
-\input{Tables/conference_far.tex}
-}
+\input{Tables_far/conference.tex}
+}}{}
 
-\IfFileExists{Tables/patent_far.tex} {
+\ifthenelse{\boolean{Patent}}{
+\IfFileExists{Tables_far/patent.tex} {
 \section{PATENTS}
-\input{Tables/patent_far.tex}
-}
+\input{Tables_far/patent.tex}
+}}{}
 
-\IfFileExists{Tables/invited_far.tex} {
+\ifthenelse{\boolean{Invited}}{
+\IfFileExists{Tables_far/invited.tex} {
 \section{INVITED TALKS}
-\input{Tables/invited_far.tex}
-}
+\input{Tables_far/invited.tex}
+}}{}
 
-\IfFileExists{Tables/personal_awards_far.tex} {
+
+\ifthenelse{\boolean{PersonalAwards}}{
+\IfFileExists{Tables_far/personal_awards.tex} {
 \section{PERSONAL AWARDS}
-\input{Tables/personal_awards_far.tex}
-}
+\input{Tables_far/personal_awards.tex}
+}}{}
 
-\IfFileExists{Tables/student_awards_far.tex} {
+\ifthenelse{\boolean{StudentAwards}}{
+\IfFileExists{Tables_far/student_awards.tex} {
 \section{STUDENT AWARDS}
-\input{Tables/student_awards_far.tex}
-}
+\input{Tables_far/student_awards.tex}
+}}{}
 
-\IfFileExists{Tables/service_far.tex} {
+\ifthenelse{\boolean{Service}}{
+\IfFileExists{Tables_far/service.tex} {
 \section{SERVICE}
-\input{Tables/service_far.tex}
-}
+\input{Tables_far/service.tex}
+}}{}
 
-\IfFileExists{Tables/reviews_far.tex} {
+\ifthenelse{\boolean{Reviews}}{
+\IfFileExists{Tables_far/reviews.tex} {
 \section{REVIEWING}
-\input{Tables/reviews_far.tex}
-}
+\input{Tables_far/reviews.tex}
+}}{}
 
-\IfFileExists{Tables/thesis_far.tex} {
-\section{GRADUATE\\ ADVISEES}
-\input{Tables/thesis_far.tex}
-}
+\ifthenelse{\boolean{GradAdvisees}}{
+\IfFileExists{Tables_far/thesis.tex} {
+\section{GRADUATE ADVISEES}
+\input{Tables_far/thesis.tex}
+}}{}
 
-\IfFileExists{Tables/undergraduate_research_far.tex} {
-\section{UNDERGRAD RESEARCH}
-\input{Tables/undergraduate_research_far.tex}
-}
+\ifthenelse{\boolean{UndergradResearch}}{
+\IfFileExists{Tables_far/undergraduate_research.tex} {
+\section{UNDERGRADUATE RESEARCH}
+\input{Tables_far/undergraduate_research.tex}
+}}{}
 
-\IfFileExists{Tables/teaching_far.tex} {
+\ifthenelse{\boolean{Teaching}}{
+\IfFileExists{Tables_far/teaching.tex} {
 \section{TEACHING}
-\input{Tables/teaching_far.tex}
-}
+This table includes all classes taught that had reported teaching evaluations.  Question 19 is ``Overall, how would you rate this instructor?''  Question 20 is ``Overall, how would you rate this course?''. The scores are out of 5 and the University average evaluation is approximately 4.1. 
+\input{Tables_far/teaching.tex}
+}}{}
 
-\IfFileExists{Tables/grants_far.tex} {
+\ifthenelse{\boolean{Grants}}{
+\IfFileExists{Tables_far/grants.tex} {
 \section{GRANTS}
-\input{Tables/grants_far.tex}
-}
+\input{Tables_far/grants.tex}
+}}{}
 
-\IfFileExists{Tables/proposals_far.tex} {
+\ifthenelse{\boolean{Proposals}}{
+\IfFileExists{Tables_far/proposals.tex} {
 \section{PROPOSALS}
-\input{Tables/proposals_far.tex}
-}
+\input{Tables_far/proposals.tex}
+}}{}
 
 \end{document}
 

@@ -7,6 +7,7 @@ import datetime
 import pandas as pd
 import os
 import sys
+from datetime import date
 
 from .stringprotect import str2latex
 from .stringprotect import abbreviate_name_list

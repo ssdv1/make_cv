@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # Script to create cv
 # must be executed from Faculty/CV folder
 # script folder must be in path
@@ -14,7 +14,7 @@ import configparser
 import argparse
 
 from .create_config import create_config
-from .create_config import verify_cv_config
+from .create_config import verify_config
 from .publons2excel import publons2excel
 from .bib_add_citations import bib_add_citations
 from .bib_get_entries import bib_get_entries
@@ -37,7 +37,7 @@ sections = {'Journal','Refereed','Book','Conference','Patent','Invited','Persona
 files = {'Scholarship','PersonalAwards','StudentAwards','Service','Reviews','CurrentGradAdvisees','GradTheses','UndergradResearch','Teaching','Proposals','Grants'} 
 
 
-def make_cv(config):
+def make_cv_tables(config,table_dir,years):
 	# # Source is faculty folder
 	# if platform.system() == 'Windows':
 	# 	faculty_source = r"S:\departments\Mechanical & Aeronautical Engineering\Faculty"
@@ -51,155 +51,146 @@ def make_cv(config):
 	# override faculty source to be relative to CV folder
 	faculty_source = config['data_dir']
 	
-	# default to writing entire history
-	years = 0
-	
-	if not os.path.exists('Tables'):
-		os.makedirs('Tables')
+	if not os.path.exists(table_dir):
+		os.makedirs(table_dir)
 	
 	# Scholarly Works
 	print('Updating scholarship tables')
 	pubfiles = ["journal.tex","conference.tex","patent.tex","book.tex","invited.tex","refereed.tex"]
-	fpubs = [open('Tables' +os.sep +name, 'w') for name in pubfiles]
+	fpubs = [open(table_dir +os.sep +name, 'w') for name in pubfiles]
 	filename = faculty_source +os.sep +config['ScholarshipFolder'] +os.sep +config['ScholarshipFile']
 	if os.path.isfile(filename):
 		nrecords = bib2latex_far(fpubs,years,filename)
 		for counter in range(len(pubfiles)):
 			fpubs[counter].close()
 			if not(nrecords[counter]):
-				os.remove('Tables'+os.sep +pubfiles[counter])
+				os.remove(table_dir+os.sep +pubfiles[counter])
 	
 	# Personal Awards
 	if config.getboolean('PersonalAwards'):
 		print('Updating personal awards table')
-		fpawards = open('Tables' +os.sep +'personal_awards.tex', 'w') # file to write
+		fpawards = open(table_dir +os.sep +'personal_awards.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['PersonalAwardsFolder'] +os.sep +config['PersonalAwardsFile']
 		nrows = personal_awards2latex(fpawards,years,filename)
 		fpawards.close()
 		if not(nrows):
-			os.remove('Tables'+os.sep +'personal_awards.tex')
+			os.remove(table_dir+os.sep +'personal_awards.tex')
 	
 	# Student Awards
 	if config.getboolean('StudentAwards'):
 		print('Updating student awards table')
-		fsawards = open('Tables' +os.sep +'student_awards.tex', 'w') # file to write
+		fsawards = open(table_dir +os.sep +'student_awards.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['StudentAwardsFolder'] +os.sep +config['StudentAwardsFile']
 		nrows = student_awards2latex(fsawards,years,filename)	
 		fsawards.close()
 		if not(nrows):
-			os.remove('Tables'+os.sep +'student_awards.tex')
+			os.remove(table_dir+os.sep +'student_awards.tex')
 	
 	# Service Activities
 	if config.getboolean('Service'):
 		print('Updating service table')
-		fservice = open('Tables' +os.sep +'service.tex', 'w') # file to write
+		fservice = open(table_dir +os.sep +'service.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['ServiceFolder'] +os.sep +config['ServiceFile']
 		nrows = service2latex(fservice,years,filename)	
 		fservice.close()
 		if not(nrows):
-			os.remove('Tables'+os.sep +'service.tex')
+			os.remove(table_dir+os.sep +'service.tex')
 	
 	if config.getboolean('Reviews'):
 		print('Updating reviews table')
-		freviews = open('Tables' +os.sep +'reviews.tex', 'w') # file to write
+		freviews = open(table_dir +os.sep +'reviews.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['ReviewsFolder'] +os.sep +config['ReviewsFile']
 		nrows = publons2latex(freviews,years,filename)
 		freviews.close()
 		if not(nrows):
-			os.remove('Tables'+os.sep +'reviews.tex')
+			os.remove(table_dir+os.sep +'reviews.tex')
 	
 	# Thesis Publications & Graduate Advisees
 	if config.getboolean('GradAdvisees'):
 		print('Updating graduate advisees table')
-		fthesis = open('Tables' +os.sep +'thesis.tex', 'w') # file to write
+		fthesis = open(table_dir +os.sep +'thesis.tex', 'w') # file to write
 		filename1 = faculty_source +os.sep +config['CurrentGradAdviseesFolder'] +os.sep +config['CurrentGradAdviseesFile']
 		filename2 = faculty_source +os.sep +config['GradThesesFolder'] +os.sep +config['GradThesesFile']
 		nrows = thesis2latex_far(fthesis,years,filename1,filename2)
 		fthesis.close()
 		if not(nrows):
-			os.remove('Tables'+os.sep +'thesis.tex')
+			os.remove(table_dir+os.sep +'thesis.tex')
 	
 	# Undergraduate Research
 	if config.getboolean('UndergradResearch'):
 		print('Updating undergraduate research table')
-		fur = open('Tables' +os.sep +'undergraduate_research.tex', 'w') # file to write
+		fur = open(table_dir +os.sep +'undergraduate_research.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['UndergradResearchFolder'] +os.sep +config['UndergradResearchFile']
 		nrows = UR2latex(fur,years,filename)	
 		fur.close()
 		if not(nrows):
-			os.remove('Tables' +os.sep +'undergraduate_research.tex')
+			os.remove(table_dir +os.sep +'undergraduate_research.tex')
 	
 	# Teaching
 	if config.getboolean('Teaching'):
 		print('Updating teaching table')
-		fteaching = open('Tables' +os.sep +'teaching.tex', 'w') # file to write
+		fteaching = open(table_dir +os.sep +'teaching.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['TeachingFolder'] +os.sep +config['TeachingFile']
 		nrows = teaching2latex(fteaching,years,filename)	
 		fteaching.close()
 		if not(nrows):
-			os.remove('Tables'+os.sep +'teaching.tex')
+			os.remove(table_dir+os.sep +'teaching.tex')
 	
 	if config.getboolean('Grants'):
 		print('updating grants table')
-		fgrants = open('Tables' +os.sep +'grants.tex', 'w') # file to write
+		fgrants = open(table_dir +os.sep +'grants.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['GrantsFolder'] +os.sep +config['GrantsFile']
 		nrows = grants2latex_far(fgrants,years,filename)
 		fgrants.close()
 		if not(nrows):
-			os.remove('Tables' +os.sep +'grants.tex')
+			os.remove(table_dir +os.sep +'grants.tex')
 	
 	# Proposals
 	if config.getboolean('Proposals'):
 		print('updating proposals table')
-		fprops = open('Tables' +os.sep +'proposals.tex', 'w') # file to write
+		fprops = open(table_dir +os.sep +'proposals.tex', 'w') # file to write
 		filename = faculty_source +os.sep +config['ProposalsFolder'] +os.sep +config['ProposalsFile']
 		nrows = props2latex_far(fprops,years,filename)	
 		fprops.close()
 		if not(nrows):
-			os.remove('Tables' +os.sep +'proposals.tex')
+			os.remove(table_dir +os.sep +'proposals.tex')
 	
+def typeset(config,command,filename):
 	# Create exclusion file
 	with open('exclusions.tex', 'w') as exclusions:
 		for section in sections:
 			if not config.getboolean(section): exclusions.write('\\setboolean{' +section +'}{false}\n')
 	
-	
-	# cleanup
-	for file in ["cv.aux","cv.bbl","cv.bcf","cv.blg","cv.log","cv.out","cv.pdf","cv.run.xml"]:
-		try:
-			os.remove(file)
-		except OSError as err:
-			print("")
-	
 	with open('biblatex-dm.cfg', 'w') as configLatex:
 		configLatex.write('\\DeclareDatamodelFields[type=field, datatype=integer, nullok=true]{citations}\n')
 		configLatex.write('\\DeclareDatamodelEntryfields{citations}\n')
 	
-	#subprocess.run(["pdflatex", "cv.tex"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT) 
-	subprocess.run(["xelatex", "cv.tex"]) 
-	subprocess.run(["biber", "cv.bcf"]) 
-	subprocess.run(["xelatex", "cv.tex"])
-	print("trying to delete cv.pdf file.  If this gets stuck, delete cv.pdf yourself and it should continue")
-	print("If it doesn't continue after that, hit ctrl-c, delete cv.pdf and try again")
+	latexfile = filename +".tex"
+	bcffile = filename +".bcf"
+	pdffile = filename +".pdf"
+	#subprocess.run([command, "cv.tex"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT) 
+	subprocess.run([command, latexfile]) 
+	subprocess.run(["biber", bcffile]) 
+	subprocess.run([command, latexfile])
+	print("Trying to delete " +filename +".pdf file.  If this gets stuck, delete " +filename +".pdf yourself and the compilation should continue")
+	print("If it doesn't, hit ctrl-c, delete " +filename +".pdf and try again")
 	while True:
 		try:
-			if os.path.exists("cv.pdf"):
-				os.remove("cv.pdf")
+			if os.path.exists(pdffile):
+				os.remove(pdffile)
 			break
 		except OSError as err:
 			continue
-	subprocess.run(["xelatex", "cv.tex"]) 
+	subprocess.run([command, latexfile]) 
 	
 	# cleanup
-	# cleanup
-	for file in ["cv.aux","cv.bbl","cv.bcf","cv.blg","cv.log","cv.out","cv.run.xml","biblatex-dm.cfg","exclusions.tex"]:
+	for file in [filename +".aux",filename +".bbl",filename +".bcf",filename +".blg",filename +".log",filename +".out",filename +".run.xml","biblatex-dm.cfg","exclusions.tex"]:
 		try:
 			os.remove(file)
 		except OSError as err:
 			print("")
-			
-def main(argv = None):
-	parser = argparse.ArgumentParser(description='This script creates a cv using python and LaTeX plus provided data')
+
+def add_default_args(parser):
 	parser.add_argument('-f','--configfile', default='cv.cfg', help='the configuration file, default is cv.cfg')
 	parser.add_argument('-d','--data_dir', help='the name of root directory containing the data folders')
 	parser.add_argument('-D','--directory', help='override data directory location in config file.  Format is NAME=<directory> where NAME can be: Scholarship, PersonalAwards, StudentAwards, Service, Reviews, CurrentGradAdvisees, GradTheses, UndergradResearch, Teaching, Proposals, Grants', action='append')
@@ -217,23 +208,7 @@ def main(argv = None):
 	parser.add_argument('-M','--IncludeStudentMarkers', help='put student author markers in cv', choices=['true','false'])
 	parser.add_argument('-e','--exclude', help='exclude section from cv', choices=sections,action='append')
 	
-	if argv is None:
-		args = parser.parse_args()
-	else:
-		args = parser.parse_args(argv)
-
-	configuration = configparser.ConfigParser()
-	configuration.read(args.configfile)
-	
-	if not configuration.has_section("CV"):
-		print("Incomplete or unreadable configuration file " +args.configfile +".\n") 
-		YN = input('Would you like to create a new configuration file named cv.cfg [Y/N]?')
-		if YN == 'Y':
-			create_config.create_config('cv.cfg')
-		exit()
-	
-	config = configuration['CV']
-	
+def process_default_args(config,args):
 	# override config with command line arguments
 	if args.data_dir is not None: config['data_dir'] = args.data_dir
 	if args.GoogleID is not None: config['GoogleID'] = args.GoogleID
@@ -277,14 +252,6 @@ def main(argv = None):
 # 		if argdict[file+'File'] is not None: config[file+'File'] = argdict[file+'File']
 # 		if argdict[file+'Folder'] is not None: config[file+'Folder'] = argdict[file+'Folder']
 		
-	ok = verify_cv_config(config)
-	if (not ok):
-		print("Incomplete or unreadable configuration file " +args.configfile +".\n") 
-		YN = input('Would you like to create a new configuration file named cv.cfg [Y/N]?')
-		if YN == 'Y':
-			create_config.create_config('cv.cfg')
-		exit()
-	
 	# do the preprocessing stuff first
 	faculty_source = config['data_dir']
 	
@@ -347,9 +314,34 @@ def main(argv = None):
 		backupfile = faculty_source +os.sep +config['ScholarshipFolder'] +os.sep +'backup4.bib'
 		shutil.copyfile(filename,backupfile)
 		bib_add_keywords(backupfile,filename)
-		
-	make_cv(config)
 
+def main(argv = None):
+	parser = argparse.ArgumentParser(description='This script creates a cv using python and LaTeX plus provided data')
+	add_default_args(parser)
+	
+	if argv is None:
+		args = parser.parse_args()
+	else:
+		args = parser.parse_args(argv)
+
+	configuration = configparser.ConfigParser()
+	configuration.read(args.configfile)
+	
+	ok = verify_config(configuration)
+	if (not ok):
+		print("Incomplete or unreadable configuration file " +args.configfile +".\n") 
+		YN = input('Would you like to create a new configuration file named cv.cfg [Y/N]?')
+		if YN == 'Y':
+			create_config.create_config('cv.cfg')
+		exit()
+	
+	config = configuration['CV']
+	process_default_args(config,args)
+	
+	make_cv_tables(config,'Tables',0)
+	typeset(config,'xelatex','cv')
 
 if __name__ == "__main__":
+	SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+	sys.path.append(os.path.dirname(SCRIPT_DIR))
 	main()

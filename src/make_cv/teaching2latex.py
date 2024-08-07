@@ -9,6 +9,7 @@ import pandas as pd
 import os
 import sys
 import numpy as np
+from datetime import date
 
 from .stringprotect import str2latex
 

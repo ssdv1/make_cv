@@ -41,31 +41,40 @@ folders = {'ScholarshipFolder': 'Scholarship',
 			
 cv_keys = {'IncludeStudentMarkers': 'true',
 			'IncludeCitationCounts': 'true'}
+			
+far_keys = {'Years': '3',
+			'IncludeStudentMarkers': 'true',
+			'IncludeCitationCounts': 'true'}
 
-def verify_cv_config(config):
-	
+def verify_config(config):
 	for key in defaults:
-		if not key in config.keys():
+		if not key in config['DEFAULT'].keys():
 			print(key +' is missing from config file')
 			return False
 	
 	for key in files:
-		if not key in config.keys():
+		if not key in config['DEFAULT'].keys():
 			print(key +' is missing from config file')
 			return False
 	
 	for key in folders:
-		if not key in config.keys():
+		if not key in config['DEFAULT'].keys():
 			print(key +' is missing from config file')
 			return False
+	
+	for sec in ['CV','FAR']:		
+		for key in sections:
+			if not key in config[sec].keys():
+				print(key +' is missing from config file')
+				return False
 			
 	for key in cv_keys:
-		if not key in config.keys():
+		if not key in config['CV'].keys():
 			print(key +' is missing from config file')
 			return False
-			
-	for key in sections:
-		if not key in config.keys():
+	
+	for key in far_keys:
+		if not key in config['FAR'].keys():
 			print(key +' is missing from config file')
 			return False
 	
@@ -83,6 +92,10 @@ def create_config(filename):
 	config['CV'] = cv_keys
 	for section in sections:
 		config['CV'][section] = 'true'    
+		
+	config['FAR'] = far_keys
+	for section in sections:
+		config['FAR'][section] = 'true' 	
 
 	with open(filename, 'w') as configfile:
 	  config.write(configfile)

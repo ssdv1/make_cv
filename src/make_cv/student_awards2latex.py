@@ -8,6 +8,7 @@
 import pandas as pd
 import os
 import sys
+from datetime import date
 
 from .stringprotect import str2latex
 from .stringprotect import abbreviate_name_list
@@ -24,7 +25,9 @@ def student_awards2latex(f,years,inputfile):
 		today = date.today()
 		year = today.year
 		begin_year = year - years
-		df = df[df['Year'].apply(lambda x: int(x)) >= begin_year]
+		source_data = source_data[(source_data['Year'] >= begin_year)]
+		if source_data.shape[0] == 0:
+			return(0)
 	
 	df = source_data.fillna('')
 	df.sort_values(by=['Year','Title','Student'], inplace=True, ascending = [False,True,True])
