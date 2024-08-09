@@ -184,7 +184,7 @@ def typeset(config,command,filename):
 	subprocess.run([command, latexfile]) 
 	
 	# cleanup
-	for file in [filename +".aux",filename +".bbl",filename +".bcf",filename +".blg",filename +".log",filename +".out",filename +".run.xml","biblatex-dm.cfg","exclusions.tex"]:
+	for file in [filename +".aux",filename +".bbl",filename +".bcf",filename +".blg",filename +".log",filename +".out",filename +".run.xml","biblatex-dm.cfg","exclusions.tex",filename +".toc"]:
 		try:
 			os.remove(file)
 		except OSError as err:
@@ -207,7 +207,26 @@ def add_default_args(parser):
 	parser.add_argument('-m','--UpdateStudentMarkers', help='update the student author markers', choices=['true','false'])
 	parser.add_argument('-M','--IncludeStudentMarkers', help='put student author markers in cv', choices=['true','false'])
 	parser.add_argument('-e','--exclude', help='exclude section from cv', choices=sections,action='append')
+
+def read_args(parser,argv):
+	if argv is None:
+		args = parser.parse_args()
+	else:
+		args = parser.parse_args(argv)
+
+	configuration = configparser.ConfigParser()
+	configuration.read(args.configfile)
 	
+	ok = verify_config(configuration)
+	if (not ok):
+		print("Incomplete or unreadable configuration file " +args.configfile +".\n") 
+		YN = input('Would you like to update configuration file named cv.cfg [Y/N]?')
+		if YN == 'Y':
+			newconfig = create_config('cv.cfg',configuration)
+			return(newconfig,args)
+		
+	return([configuration,args])
+
 def process_default_args(config,args):
 	# override config with command line arguments
 	if args.data_dir is not None: config['data_dir'] = args.data_dir
@@ -319,21 +338,7 @@ def main(argv = None):
 	parser = argparse.ArgumentParser(description='This script creates a cv using python and LaTeX plus provided data')
 	add_default_args(parser)
 	
-	if argv is None:
-		args = parser.parse_args()
-	else:
-		args = parser.parse_args(argv)
-
-	configuration = configparser.ConfigParser()
-	configuration.read(args.configfile)
-	
-	ok = verify_config(configuration)
-	if (not ok):
-		print("Incomplete or unreadable configuration file " +args.configfile +".\n") 
-		YN = input('Would you like to create a new configuration file named cv.cfg [Y/N]?')
-		if YN == 'Y':
-			create_config.create_config('cv.cfg')
-		exit()
+	[configuration,args] = read_args(parser,argv)
 	
 	config = configuration['CV']
 	process_default_args(config,args)

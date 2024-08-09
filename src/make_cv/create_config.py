@@ -45,6 +45,9 @@ cv_keys = {'IncludeStudentMarkers': 'true',
 far_keys = {'Years': '3',
 			'IncludeStudentMarkers': 'true',
 			'IncludeCitationCounts': 'true'}
+			
+web_keys = {'IncludeStudentMarkers': 'true',
+			'IncludeCitationCounts': 'true'}
 
 def verify_config(config):
 	for key in defaults:
@@ -62,11 +65,15 @@ def verify_config(config):
 			print(key +' is missing from config file')
 			return False
 	
-	for sec in ['CV','FAR']:		
-		for key in sections:
-			if not key in config[sec].keys():
-				print(key +' is missing from config file')
-				return False
+	for sec in ['CV','FAR','WEB']:	
+		if not config.has_section(sec):
+			print(sec +' is missing from config file') 
+			return False
+		else:
+			for key in sections:
+				if not key in config[sec].keys():
+					print(key +' is missing from config file')
+					return False
 			
 	for key in cv_keys:
 		if not key in config['CV'].keys():
@@ -77,10 +84,15 @@ def verify_config(config):
 		if not key in config['FAR'].keys():
 			print(key +' is missing from config file')
 			return False
+			
+	for key in web_keys:
+		if not key in config['WEB'].keys():
+			print(key +' is missing from config file')
+			return False
 	
 	return True
 
-def create_config(filename):
+def create_config(filename,oldconfig=None):
 	config = configparser.ConfigParser()
 	config['DEFAULT'] = defaults		
 	for key,value in files.items():
@@ -96,9 +108,22 @@ def create_config(filename):
 	config['FAR'] = far_keys
 	for section in sections:
 		config['FAR'][section] = 'true' 	
+		
+	config['WEB'] = web_keys
+	for section in sections:
+		config['WEB'][section] = 'false' 
+	
+	config['WEB']['Journal'] = 'true'
+	
+	if oldconfig is not None:
+		print(oldconfig['DEFAULT']['GoogleID'])
+		config['DEFAULT']['GoogleID'] = oldconfig['DEFAULT']['GoogleID']
+		config['DEFAULT']['ScraperID'] = oldconfig['DEFAULT']['ScraperID']
 
 	with open(filename, 'w') as configfile:
 	  config.write(configfile)
+	  
+	return(config)
   
 if __name__ == "__main__":
 	create_config('cv.cfg')

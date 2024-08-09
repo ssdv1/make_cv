@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "make_cv"
-version = "0.0.1"
+version = "0.0.3"
 authors = [
   { name="Brian Helenbrook", email="brian.helenbrook@gmail.com" },
 ]
@@ -26,8 +26,8 @@ dependencies = [
 
 [project.scripts]
 make_cv = "make_cv.make_cv:main"
-
-
+make_far = "make_cv.make_far:main"
+make_web = "make_cv.make_web:main"
 
 [project.urls]
 Homepage = "https://github.com/bhelenbr/make_cv"

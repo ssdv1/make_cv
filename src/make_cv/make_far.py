@@ -25,6 +25,7 @@ from .make_cv import make_cv_tables
 from .make_cv import typeset
 from .make_cv import add_default_args
 from .make_cv import process_default_args
+from .make_cv import read_args
 
 from .UR2latex_far import UR2latex_far
 from .personal_awards2latex_far import personal_awards2latex_far
@@ -109,26 +110,12 @@ def make_far_tables(config,table_dir):
 def main(argv = None):
 	parser = argparse.ArgumentParser(description='This script creates a far using python and LaTeX plus provided data')
 	add_default_args(parser)
-	
 	parser.add_argument('-y','--years', help='number of years to include in far',type=int)
 
-	if argv is None:
-		args = parser.parse_args()
-	else:
-		args = parser.parse_args(argv)
-
-	configuration = configparser.ConfigParser()
-	configuration.read(args.configfile)
-	
-	ok = verify_config(configuration)
-	if (not ok):
-		print("Incomplete or unreadable configuration file " +args.configfile +".\n") 
-		YN = input('Would you like to create a new configuration file named cv.cfg [Y/N]?')
-		if YN == 'Y':
-			create_config.create_config('cv.cfg')
-		exit()
+	[configuration,args] = read_args(parser,argv)
 	
 	config = configuration['FAR']
+	
 	process_default_args(config,args)
 	if args.years is not None: config['Years'] = args.years
 
