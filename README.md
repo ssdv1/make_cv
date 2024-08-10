@@ -1,18 +1,18 @@
-### make\_cv.py 
+### make\_cv 
 
-make\_cv.py is a program that uses Python and LaTex to make a faculty curriculum vitae.  For reasons that are not clear to me, faculty use a c.v. to keep track of everything they have done in their careers.  For most of the data (awards, service, grants, etc…), the basic methodology that make\_cv.py uses is to keep the data in its most natural format and then process it using Python’s pandas to create LaTex tabularx tables which are then generated into a c.v.  For scholarship items the system uses a .bib file to store the data and then uses biber to create publications lists (journal articles, conferences, books, etc…).  make\_cv.py comes has several features built in to make managing this data easier.  For example, it interfaces with google scholar to update citation counts for each journal article and it uses the provided data on student advisees to mark student authors in the bibliography.   It will also use bibtexautocomplete to fill in missing DOI data for publications.  The following describes its set-up and use.  Other utilities are provided to make web pages from your data (make\_web.py) and faculty activity reports (make\_far.py).
+make\_cv is a program that uses Python and LaTex to make a faculty curriculum vitae.  For reasons that are not clear to me, faculty use a c.v. to keep track of everything they have done in their careers.  For most of the data (awards, service, grants, etc…), the basic methodology that make\_cv uses is to keep the data in its most natural format and then process it using Python’s pandas to create LaTeX tabularx tables which are then generated into a c.v.  For scholarship items the system uses a .bib file to store the data and then uses biber to create publications lists (journal articles, conferences, books, etc…).  make\_cv has several features built in to make managing this data easier.  For example, it interfaces with google scholar to update citation counts for each journal article and it uses the provided data on student advisees to mark student authors in the bibliography.   It will also use bibtexautocomplete to fill in missing DOI data for publications.  The following describes its set-up and use.  Other utilities are provided to make web pages from your data (make\_web) and faculty activity reports (make\_far).  These are basically the same except that make\_far offers a \-y flag to limit the number of years of data that are used to make the activity report and the formatting of the data is always chronological.  The default is 3 years of data.
 
 ### Installation & Startup:
 
 This assumes you have LaTex and Python installed on your system.  If not see Appendix A for how to install those programs.  To install, use pip:
 
-`pip install make_cv.py`
+`pip install make_cv`
 
-Once make\_cv.py is installed, you need to create the data directories and default files for adding data.  Choose a root folder for keeping your c.v. related data.  In this example, this folder is called `mydata`.  Create this folder on your system, then execute the command
+Once make\_cv is installed, you need to create the data directories and default files for adding data.  Choose a name for the root folder for keeping your c.v. related data.  In this example, this folder is called `mydata`.  To create this folder, execute the command
 
-`make_cv.py -b <path>/mydata`
+`make_cv -b <path>/mydata`
 
-Where \<path\> is the path to the mydata folder.  This can be a relative or full path.  The \-b flag tells make\_cv.py to create a new data directory.  This will create the default data folders and files.  Later on, you can configure the locations of all files and folders, but to get started it is easiest to use the defaults.
+Where \<path\> is the path to the mydata folder.  This can be a relative or full path.  The \-b flag tells make\_cv to create a new data directory.  For example “`make_cv -b mydata”` creates the default data folders and files in a folder called `mydata` in  current working directory.   Later on, you can configure the locations of all files and folders, but to get started it is easiest to use the defaults.
 
 The folders/files created within mydata are
 
@@ -36,29 +36,29 @@ Teaching/teaching evaluation data.xlsx
 
 To test that the installation is working, you can make the default c.v. by changing to the mydata/CV directory and executing the command
 
-`make_cv.py`
+`make_cv`
 
 This will make the file `cv.pdf` in the CV folder which is just based on the default data provided.  If something goes wrong hit ctrl-c to stop things or you can just close the terminal window and open a new one.  If you try to do this while you have the file cv.pdf open, it will hang.  It may restart if you close the cv.pdf file, but sometimes you still need to restart the process.  
 
 ### The Data
 
-The following describes how to maintain all of the data files in your data folder.  You do not need to use all components of make\_cv.py if you don’t want to.  See the section Customization to learn how to turn on and off components.  Most people will definitely want to use the Scholarship components, but it may be more convenient to keep other sections using your own personal system.  This is easy to accommodate with make\_cv.py.  
+The following describes how to maintain all of the data files in your data folder.  You do not need to use all components of make\_cv if you don’t want to.  See the section Customization to learn how to turn on and off components.  Most people will definitely want to use the Scholarship components, but it may be more convenient to keep other sections using your own personal system.  This is easy to accommodate with make\_cv.  
 
 Awards
 
-1. There are two excel files, one for personal awards & one for student awards.  The files are `student awards.xlsx` and `personal awards.xlsx`.   The notes page of each excel sheet explains what data should be included.   If you receive the same award multiple times, make\_cv.py will create a single entry for that award with a date string such as: “πτσ Teaching Award 2007-2014”  
+1. There are two excel files, one for personal awards and one for student awards.  The files are `student awards.xlsx` and `personal awards.xlsx`.   The notes page of each excel sheet explains what data should be included.   If you receive the same award multiple times, make\_cv will create a single entry for that award with a date string such as: “πτσ Teaching Award 2007-2014”  
    
 
 Proposals & Grants
 
-2. There is one excel file here `proposals & grants.xlsx`.  “Proposal”, “Name.1”, “Allocated Amt”, “Total Cost”, “Funded”, “Long Descr”, and “PRO\_BGN\_DT”.   “Proposal” must be a unique identifier for each proposal.  “Name.1” is the name of the funding agency.  “Allocated Amt” is the percent that should be allocated to you and “Total Cost” is the total dollar amount of the grant.  “Funded” is a Y or N field that states whether the proposal was funded or not.  PRO\_BGN\_DT is the start date for the proposed work.  “PRO\_SUB\_DT” is the submission date.   The proposals are organized by proposal start date in the c.v..  If you make a faculty activity report, then the proposals are organized by submission date.  make\_cv.py will sum up your allocated and total grant dollars and put that at the bottom of the grant section of the c.v.  It will do the same for the proposal dollars.
+2. There is one excel file here `proposals & grants.xlsx`.  The only necessary fields are “Proposal”, “Name.1”, “Allocated Amt”, “Total Cost”, “Funded”, “Long Descr”, and “PRO\_BGN\_DT”.   “Proposal” must be a unique identifier for each proposal.  “Name.1” is the name of the funding agency.  “Allocated Amt” is the percent that should be allocated to you and “Total Cost” is the total dollar amount of the grant.  “Funded” is a Y or N field that states whether the proposal was funded or not.  PRO\_BGN\_DT is the start date for the proposed work.  “PRO\_SUB\_DT” is the submission date.   The proposals are organized by proposal start date in the c.v..  If you make a faculty activity report, then the proposals are organized by submission date.  make\_cv will sum up your allocated and total grant dollars and put that at the bottom of the grant section of the c.v.  It will do the same for the proposal dollars.
 
 Scholarship
 
 3. There are three files in this folder   
    1. `current student data.xlsx` contains a list of your currently active graduate students.    
-   2. `thesis data.xlsx` contains a list of theses your students have produced.  If the student has not finished the degree yet they should be listed in the `current student data.xlsx` file.  Every entry in this file must have a starting year.  
-   3. `scholarship.bib` is a bibliography file in a BibTex “.bib” format that contains all of your scholarly output.   make\_cv.py uses the keyword field to help categorize the entries (categorized as: journals, refereed conference papers, conference presentations, books and book chapters, technical reports, patents, invited talks, arXiv papers).   To view and manage a .bib file, download the free program “Jabref” [https://www.jabref.org](https://www.jabref.org/) (Mac & Windows) or on the Mac you can also use “Bibdesk” [https://bibdesk.sourceforge.io](https://bibdesk.sourceforge.io/).  (For the Mac I prefer BibDesk, as it is more stable, but Jabref has a few features that BibDesk does not. See Appendix F for Jabref hints).   Even if you already have a bibliography file,  it is recommended that you create a Google Scholar profile because make\_cv.py uses Google Scholar for some of its advanced features.   This only needs to be done once.  
+   2. `thesis data.xlsx` contains a list of theses your students have produced.  If the student has not finished the degree yet they should be listed in the `current student data.xlsx` file not in this file.  If you co-advised a student, add that to the title in parentheses i.e. “Life, The Universe, and Everything (co-advised w/D. Adams)”  
+   3. `scholarship.bib` is a bibliography file in a BibTex “.bib” format that contains all of your scholarly output.   make\_cv uses the keyword field to help categorize the entries (categorized as: journals, refereed conference papers, conference presentations, books and book chapters, technical reports, patents, invited talks, arXiv papers).   To view and manage a .bib file, download the free program “Jabref” [https://www.jabref.org](https://www.jabref.org/) (Mac & Windows) or on the Mac you can also use “Bibdesk” [https://bibdesk.sourceforge.io](https://bibdesk.sourceforge.io/).  (For the Mac I prefer BibDesk, as it is more stable, but Jabref has a few features that BibDesk does not. See Appendix F for Jabref hints).   Even if you already have a bibliography file,  it is recommended that you create a Google Scholar profile because make\_cv uses Google Scholar for some of its advanced features.   This only needs to be done once.  
       1. Go to [http://**scholar**.**google**.com](http://scholar.google.com/)  website.  
          2. Click the My Citations tab at the top of the page.  
          3.  Login using your university e-mail account.  
@@ -102,12 +102,12 @@ Service
 This folder contains 3 files
 
 4. `undergraduate research data.xlsx`.  See the notes sheet in this file for an explanation of the categories.    
-5. `service data.xlsx`.   Use this file to keep track of your service data.   The categories are “Description”, “Type”-(University,Department,Professional,Community), “Position”-(Member,Chair), “Term”, “Calendar Year”, “Hours/Semester”.  “Hours/Semester” is not used when making the c.v..  If you have repeated service each term, you should copy and paste the lines from previous term and make a new entry for each term that you are on an assignment.   Make\_cv.py will gather all like entries into a single entry in the c.v. with a year sequence.  For example, “Science fair judge 2018-2021,2023”  
+5. `service data.xlsx`.   Use this file to keep track of your service data.   The categories are “Description”, “Type”-(University,Department,Professional,Community), “Position”-(Member,Chair), “Term”, “Calendar Year”, “Hours/Semester”.  “Hours/Semester” is not used when making the c.v..  If you have repeated service each term, you should copy and paste the lines from the previous term and make a new entry for each term that you are on an assignment.   make\_cv will gather all like entries into a single entry in the c.v. with a year sequence.  For example, “Science fair judge 2018-2021,2023”  
 6. I recommend that you let Web of Science keep your paper reviewing activity records for you.  To use the service do the following  
    1.  Sign up for an account at [Web of Science](https://clarivate.com/products/scientific-and-academic-research/research-publishing-solutions/reviewer-recognition-service/)  
    2. Forward email review receipts from journals to reviews@webofscience.com and they will keep a certified log of your reviewing activities.  (Many journals are doing this for you automatically now).
 
-   To get the most recent data from Web of Science (for c.v. or activity reporting)
+   To get the most recent data from Web of Science for your c.v.
 
 1. Log in to web of science at the link above using your account information  
 2.  Click “View My Researcher Profile”  
@@ -117,18 +117,17 @@ This folder contains 3 files
 6. Under Reviews click “List the manuscripts you reviewed in the selected period”  
 7. Click the Download Icon (down arrow thingy)  
 8. Rename the downloaded json file `reviews data.json` and put it in your `mydata/Service` folder on the s-drive.  The .json file will get converted to `reviews data.xlsx` when the cv is created.   If you have your own reviewing records from before you started using Web of Science you can add them to a separate file called `reviews_non-publons.xlsx`   Use the same format as the `reviews data.xlsx` file i.e. ”Journal, Date, Rounds” and that will automatically get added to the reviews data whenever your c.v. or FAR is generated.  
-   make\_cv.py will gather the reviews by journal and list the number reviews for each journal in the c.v.   it will also sum up the total number of reviews performed over the time period where records were kept and list that in the c.v. as well.
+   make\_cv will gather the reviews by journal and list the number reviews for each journal in the c.v.   it will also sum up the total number of reviews performed over the time period where records were kept and list that in the c.v. as well.
 
 Teaching
 
-7. Every school has a different format for their teaching evaluation data.  Make\_cv.py assume there will be entries in this file under the column headings: ‘combined\_course\_num', 'STRM', 'term', 'course\_section', 'course\_title','question', ‘Weighted Average', 'enrollment', 'count\_evals'.  ‘Combined\_course\_num’ is the course catalog number i.e. something like “ME515/CE538” for a cross-listed class.  ‘STRM’ is an integer field which is an integer associated with the term the class was taught.  This is used to sort the teaching chronologically.  ‘term’ is the text name of the term i.e. ‘Summer 2024’.  ‘course\_section’ is a section number.  This is treated as text, but is commonly an integer.  ‘course\_title’ is the title i.e. “Intro. to Finite Element Methods”.  ‘Question’ is an integer associated with the question number on the teaching evaluation.  make\_cv.py is currently assuming that question 19 and 20 are the ones that ask how you rate this instructor and how you rate this course.  These are the responses that go into the cv.  ‘Weighted Average’ is the teaching evaluation times the number of evaluations.  ‘Enrollment’ is the total enrollment in the section, and ‘count\_evals’ is the number of teaching evaluations received for that class. 
-
+7. Every school has a different format for their teaching evaluation data.  make\_cv assumes there will be entries in this file under the column headings: ‘combined\_course\_num', 'STRM', 'term', 'course\_section', 'course\_title','question', ‘Weighted Average', 'enrollment', 'count\_evals'.  ‘Combined\_course\_num’ is the course catalog number i.e. something like “ME515/CE538” for a cross-listed class.  ‘STRM’ is an integer field which is an integer associated with the term the class was taught.  This is used to sort the teaching chronologically.  ‘term’ is the text name of the term i.e. ‘Summer 2024’.  ‘course\_section’ is a section number.  This is treated as text, but is commonly an integer.  ‘course\_title’ is the title i.e. “Intro. to Finite Element Methods”.  ‘Question’ is an integer associated with the question number on the teaching evaluation.  make\_cv is currently assuming that question 19 and 20 are the ones that ask how you rate this instructor and how you rate this course.  These are the responses that go into the cv.  ‘Weighted Average’ is the teaching evaluation times the number of evaluations.  ‘Enrollment’ is the total enrollment in the section, and ‘count\_evals’ is the number of teaching evaluations received for that class.  This format is likely to not be convenient for other Universities.  See the customization section below for how to change this.. 
 
 ### Configuration & Customization
 
-To use all of the features of make\_cv.py, some additional information must be provided.  The file CV/cv.cfg contains all of the configuration information.  This is a text file that can be edited with any text editor.  To use any of the Google Scholar features, you have to enter your Google ID.  To find this go to [Google Scholar](https://scholar.google.com) and click on “My profile” in the top left.  If you examine the url for this page it should have a section that looks like: user=m\_of3wYAAAAJ\&hl=en.  Your user id is the string after the \= sign up to but not including the &.  So in this case it is “m\_of3wYAAAAJ”.  Put this value into the cv.cfg file under “googleid”.  
+To use all of the features of make\_cv, some additional information must be provided.  The file CV/cv.cfg contains all of the configuration information.  This is a text file that can be edited with any text editor.  To use any of the Google Scholar features, you have to enter your Google ID.  To find this go to [Google Scholar](https://scholar.google.com) and click on “My profile” in the top left.  If you examine the url for this page it should have a section that looks like: user=m\_of3wYAAAAJ\&hl=en.  Your user id is the string after the \= sign up to but not including the &.  So in this case it is “m\_of3wYAAAAJ”.  Put this value into the cv.cfg file under “googleid”.  
 
-The other significant configuration that can be done with this file is to set the defaults for what sections of the cv make\_cv.py controls.  These are controlled by the entries under “CV”.  If a data file is empty or missing, make\_cv.py will automatically exclude it so you don’t need to turn off empty sections.  I often leave all the sections on, then use command line options (discussed below) to create a shorter c.v. when I need that.
+The other significant configuration that can be done with this file is to set the defaults for what sections of the cv make\_cv controls.  These are controlled by the entries under “CV”.  If a data file is empty or missing, make\_cv will automatically exclude it so you don’t need to turn off empty sections.  I often leave all the sections on, then use command line options (discussed below) to create a shorter c.v. when I need that.
 
 Further configurations can be done by editing the file cv\_header.tex, cv.tex, and cv\_tables.tex. 
 
@@ -139,7 +138,7 @@ Further configurations can be done by editing the file cv\_header.tex, cv.tex, a
 
 ### Advanced Features & Command Line Options
 
-make\_cv.py can do a lot of things automatically for you.  If you add a `-h` flag it will give you a full list of things you can use it to do.  Here are some of the most useful options:  
+make\_cv can do a lot of things automatically for you.  If you add a `-h` flag it will give you a full list of things you can use it to do.  Here are some of the most useful options:  
     
   `-g {true,false} search for and add new entries to the .bib file using google scholar`  
   `-c {true,false} update citation counts stored in .bib file`  
@@ -149,15 +148,15 @@ make\_cv.py can do a lot of things automatically for you.  If you add a `-h` fla
 
 For example, the following will look for any new google scholar entries in the last year, help you categorize them, then update the citation counts using google scholar, update the student markers, and exclude the proposals and conferences section when making a c.v.
 
-`python ..\..\_Scripts\make_cv.py -g true -c true -m true -e Conference -e Proposals`
+`make_cv -g true -c true -m true -e Conference -e Proposals`
 
 Most of the advanced features are by default off, but you can turn them on by default by editing the cv.cfg file in your CV folder.  I usually only use the advanced features intermittently so I leave the advanced features off by default and then use the command line options when I need to use them.
 
-The first time you run make\_cv.py it will find unclassified entries in your .bib file and ask you to classify them.  This will also happen if you add an entry from some other search source and it is not classified.  This modifies the keywords in the .bib file.  The categories determine in what sections that item will appear in the c.v.  If there is something appearing in the wrong section, use Bibdesk or Jabref to put the entry in the correct category.  (A drag and drop operation in BibDesk.  See Appendix F for Jabref instructions).  One of the categories is ignore, which should be chosen if you want to keep the entry in the .bib file but you don’t want it to appear in the c.v. 
+The first time you run make\_cv it will find unclassified entries in your .bib file and ask you to classify them.  This will also happen if you add an entry from some other search source and it is not classified.  This modifies the keywords in the .bib file.  The categories determine in what sections that item will appear in the c.v.  If there is something appearing in the wrong section, use Bibdesk or Jabref to put the entry in the correct category.  (A drag and drop operation in BibDesk.  See Appendix F for Jabref instructions).  One of the categories is ignore, which should be chosen if you want to keep the entry in the .bib file but you don’t want it to appear in the c.v. 
 
 If you add \-g true, it will use Google Scholar to find any entries that have appeared in the last year and ask you if you want to add them.  Everything in google scholar has an id, so it keeps track of these in the .bib file and will never ask you to add an entry twice.  It also uses these id tags when it updates the number of citations an entry has.  It will use bibtexautocomplete to add doi information to the new entries.  The doi’s appear as hyperlinks in the c.v. so people can click on an entry in your c.v. and be taken to the corresponding web location for that item.
 
-If you add \-m true, it uses the files “undergraduate research data.xlsx”, “thesis data.xlsx” and “current student data.xlsx” to find the first initial and last names of all of your student advisees.  It then adds a marker after those names in the .bib file.  The two markers are \\us for undergraduate student and \\gs for graduate student.  The actual symbol that these commands create is defined in the .bib file.  Currently, make\_cv.py is configured to mark these authors in perpetuity, meaning that if you have a student who was an undergraduate advisee that became a graduate advisee, then you published with them 10 years later, that author will still receive both an undergraduate and a graduate advisee student marker.  There is a way to set a time limit for when this terminates, but I haven’t exposed that functionality yet.
+If you add \-m true, it uses the files “undergraduate research data.xlsx”, “thesis data.xlsx” and “current student data.xlsx” to find the first initial and last names of all of your student advisees.  It then adds a marker after those names in the .bib file.  The two markers are \\us for undergraduate student and \\gs for graduate student.  The actual symbol that these commands create is defined in the .bib file.  Currently, make\_cv is configured to mark these authors in perpetuity, meaning that if you have a student who was an undergraduate advisee that became a graduate advisee, then you published with them 10 years later, that author will still receive both an undergraduate and a graduate advisee student marker.  There is a way to set a time limit for when this terminates, but I haven’t exposed that functionality yet.
 
 If you add \-M false, it will redefine the \\us and \\gs markers so that no markers are produced in the file. This is also configurable in the cv.cfg file with the entry includestudentmarkers.
 
