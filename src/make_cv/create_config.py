@@ -116,9 +116,9 @@ def create_config(filename,oldconfig=None):
 	config['WEB']['Journal'] = 'true'
 	
 	if oldconfig is not None:
-		print(oldconfig['DEFAULT']['GoogleID'])
-		config['DEFAULT']['GoogleID'] = oldconfig['DEFAULT']['GoogleID']
-		config['DEFAULT']['ScraperID'] = oldconfig['DEFAULT']['ScraperID']
+		if oldconfig.has_section('DEFAULT'):
+			if 'GoogleID' in oldconfig['DEFAULT'].keys(): config['DEFAULT']['GoogleID'] = oldconfig['DEFAULT']['GoogleID']
+			if 'ScraperID' in oldconfig['DEFAULT'].keys(): config['DEFAULT']['ScraperID'] = oldconfig['DEFAULT']['ScraperID']
 
 	with open(filename, 'w') as configfile:
 	  config.write(configfile)

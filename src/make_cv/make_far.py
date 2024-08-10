@@ -120,7 +120,7 @@ def main(argv = None):
 	if args.years is not None: config['Years'] = args.years
 
 	make_far_tables(config,'Tables_far')
-	typeset(config,'xelatex','far')
+	typeset(config,'far',['xelatex','far.tex'])
 
 if __name__ == "__main__":
 	main()

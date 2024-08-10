@@ -12,6 +12,8 @@ import platform
 import shutil
 import configparser
 import argparse
+import inspect
+from pathlib import Path
 
 from .create_config import create_config
 from .create_config import verify_config
@@ -38,16 +40,6 @@ files = {'Scholarship','PersonalAwards','StudentAwards','Service','Reviews','Cur
 
 
 def make_cv_tables(config,table_dir,years):
-	# # Source is faculty folder
-	# if platform.system() == 'Windows':
-	# 	faculty_source = r"S:\departments\Mechanical & Aeronautical Engineering\Faculty"
-	# 	gathered_source = r"S:\departments\Mechanical & Aeronautical Engineering\Confidential Information\Department Data"
-	# 	sys.path.insert(0, r"S:\departments\Mechanical & Aeronautical Engineering\Faculty\_Scripts")	
-	# else:
-	# 	faculty_source = r"/Volumes/Mechanical & Aerospace Engineering/Faculty"
-	# 	gathered_source = r"/Volumes/Mechanical & Aerospace Engineering/Confidential Information/Department Data"
-	# 	sys.path.insert(0, r"/Volumes/Mechanical & Aerospace Engineering/Faculty/_Scripts")
-	
 	# override faculty source to be relative to CV folder
 	faculty_source = config['data_dir']
 	
@@ -155,44 +147,11 @@ def make_cv_tables(config,table_dir,years):
 		if not(nrows):
 			os.remove(table_dir +os.sep +'proposals.tex')
 	
-def typeset(config,command,filename):
-	# Create exclusion file
-	with open('exclusions.tex', 'w') as exclusions:
-		for section in sections:
-			if not config.getboolean(section): exclusions.write('\\setboolean{' +section +'}{false}\n')
-	
-	with open('biblatex-dm.cfg', 'w') as configLatex:
-		configLatex.write('\\DeclareDatamodelFields[type=field, datatype=integer, nullok=true]{citations}\n')
-		configLatex.write('\\DeclareDatamodelEntryfields{citations}\n')
-	
-	latexfile = filename +".tex"
-	bcffile = filename +".bcf"
-	pdffile = filename +".pdf"
-	#subprocess.run([command, "cv.tex"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT) 
-	subprocess.run([command, latexfile]) 
-	subprocess.run(["biber", bcffile]) 
-	subprocess.run([command, latexfile])
-	print("Trying to delete " +filename +".pdf file.  If this gets stuck, delete " +filename +".pdf yourself and the compilation should continue")
-	print("If it doesn't, hit ctrl-c, delete " +filename +".pdf and try again")
-	while True:
-		try:
-			if os.path.exists(pdffile):
-				os.remove(pdffile)
-			break
-		except OSError as err:
-			continue
-	subprocess.run([command, latexfile]) 
-	
-	# cleanup
-	for file in [filename +".aux",filename +".bbl",filename +".bcf",filename +".blg",filename +".log",filename +".out",filename +".run.xml","biblatex-dm.cfg","exclusions.tex",filename +".toc"]:
-		try:
-			os.remove(file)
-		except OSError as err:
-			print("")
 
 def add_default_args(parser):
-	parser.add_argument('-f','--configfile', default='cv.cfg', help='the configuration file, default is cv.cfg')
+	parser.add_argument('-b','--begin', help='create default directory structure & files named <>',)
 	parser.add_argument('-d','--data_dir', help='the name of root directory containing the data folders')
+	parser.add_argument('-f','--configfile', default='cv.cfg', help='the configuration file, default is cv.cfg')
 	parser.add_argument('-D','--directory', help='override data directory location in config file.  Format is NAME=<directory> where NAME can be: Scholarship, PersonalAwards, StudentAwards, Service, Reviews, CurrentGradAdvisees, GradTheses, UndergradResearch, Teaching, Proposals, Grants', action='append')
 	parser.add_argument('-F','--file', help='override data file location in config file.  Format is NAME=<file name> where NAME can be: Scholarship, PersonalAwards, StudentAwards, Service, Reviews, CurrentGradAdvisees, GradTheses, UndergradResearch, Teaching, Proposals, Grants', action='append')
 	parser.add_argument('-J','--ReviewsFileJSON', help='the name of the reviews JSON file')
@@ -203,7 +162,7 @@ def add_default_args(parser):
 	parser.add_argument('-g','--GetNewScholarshipEntries', help='search for and add new entries to the .bib file',  choices=['true','false'])
 	parser.add_argument('-I','--SearchForDOIs', help='search for and add missing DOIs to the .bib file',  choices=['true','false'])
 	parser.add_argument('-c','--UpdateCitations', help='update citation counts',  choices=['true','false'])
-	parser.add_argument('-C','--IncludeCitationsCounts', help='put citation counts in cv', choices=['true','false'])
+	parser.add_argument('-C','--IncludeCitationCounts', help='put citation counts in cv', choices=['true','false'])
 	parser.add_argument('-m','--UpdateStudentMarkers', help='update the student author markers', choices=['true','false'])
 	parser.add_argument('-M','--IncludeStudentMarkers', help='put student author markers in cv', choices=['true','false'])
 	parser.add_argument('-e','--exclude', help='exclude section from cv', choices=sections,action='append')
@@ -213,6 +172,20 @@ def read_args(parser,argv):
 		args = parser.parse_args()
 	else:
 		args = parser.parse_args(argv)
+		
+		
+	if args.begin is not None:
+		# Set up file structure and exit
+		if os.path.exists(args.begin):
+			print("This directory already exists.  Please provide a different directory name")
+			exit()
+		else:
+			dst = Path(args.begin)
+			#dst = path.parent.absolute()
+			myDir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
+			shutil.copytree(myDir +os.sep +"files",dst)
+			print("Directory created.  Now change to the CV folder in that directory and type make_cv to create sample")
+			exit()
 
 	configuration = configparser.ConfigParser()
 	configuration.read(args.configfile)
@@ -240,7 +213,7 @@ def process_default_args(config,args):
 	if args.SearchForDOIs is not None: config['SearchForDOIs'] = args.SearchForDOIs
 	if args.ConvertJSON is not None: config['ConvertJSON'] = args.ConvertJSON
 	if args.IncludeStudentMarkers is not None: config['IncludeStudentMarkers'] = args.IncludeStudentMarkers
-	if args.IncludeCitationsCounts is not None: config['IncludeCitationCounts'] = args.IncludeCitationCounts
+	if args.IncludeCitationCounts is not None: config['IncludeCitationCounts'] = args.IncludeCitationCounts
 	
 	if args.exclude is not None:
 		for section in args.exclude:
@@ -333,6 +306,45 @@ def process_default_args(config,args):
 		backupfile = faculty_source +os.sep +config['ScholarshipFolder'] +os.sep +'backup4.bib'
 		shutil.copyfile(filename,backupfile)
 		bib_add_keywords(backupfile,filename)
+		
+def typeset(config,filename,command):
+	# Create exclusion file
+	with open('exclusions.tex', 'w') as exclusions:
+		for section in sections:
+			if not config.getboolean(section): exclusions.write('\\setboolean{' +section +'}{false}\n')
+		if not config.getboolean('IncludeCitationCounts'): exclusions.write('\\DeclareFieldFormat{citations}{}\n')
+		if not config.getboolean('IncludeStudentMarkers'):
+			exclusions.write('\\renewcommand{\\us}{}\n')
+			exclusions.write('\\renewcommand{\\gs}{}\n')
+	
+	with open('biblatex-dm.cfg', 'w') as configLatex:
+		configLatex.write('\\DeclareDatamodelFields[type=field, datatype=integer, nullok=true]{citations}\n')
+		configLatex.write('\\DeclareDatamodelEntryfields{citations}\n')
+	
+	bcffile = filename +".bcf"
+	pdffile = filename +".pdf"
+	#subprocess.run([command, "cv.tex"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT) 
+	subprocess.run(command) 
+	subprocess.run(["biber", bcffile]) 
+	subprocess.run(command)
+	print("Trying to delete " +filename +".pdf file.  If this gets stuck, delete " +filename +".pdf yourself and the compilation should continue")
+	print("If it doesn't, hit ctrl-c, delete " +filename +".pdf and try again")
+	while True:
+		try:
+			if os.path.exists(pdffile):
+				os.remove(pdffile)
+			break
+		except OSError as err:
+			continue
+	subprocess.run(command) 
+	
+	# cleanup
+	for file in [filename +".aux",filename +".bbl",filename +".bcf",filename +".blg",filename +".log",filename +".out",filename +".run.xml","biblatex-dm.cfg","exclusions.tex",filename +".toc"]:
+		try:
+			os.remove(file)
+		except OSError as err:
+			print("")
+
 
 def main(argv = None):
 	parser = argparse.ArgumentParser(description='This script creates a cv using python and LaTeX plus provided data')
@@ -343,8 +355,8 @@ def main(argv = None):
 	config = configuration['CV']
 	process_default_args(config,args)
 	
-	make_cv_tables(config,'Tables',0)
-	typeset(config,'xelatex','cv')
+	make_cv_tables(config,'Tables_cv',0)
+	typeset(config,'cv',['xelatex','cv.tex'])
 
 if __name__ == "__main__":
 	SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))

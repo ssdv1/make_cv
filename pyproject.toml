@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "make_cv"
-version = "0.0.3"
+version = "0.1.0"
 authors = [
   { name="Brian Helenbrook", email="brian.helenbrook@gmail.com" },
 ]
@@ -20,7 +20,7 @@ classifiers = [
 dependencies = [
   "pandas",
   "openpyxl",
-  "bibtexparser",
+  "bibtexparser<2.0.0",
   "bibtexautocomplete"
 ]
 
@@ -34,14 +34,7 @@ Homepage = "https://github.com/bhelenbr/make_cv"
 Issues = "https://github.com/bhelenbr/make_cv/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/make_cv","files/"]
+packages = ["src/make_cv"]
 
-# [tool.hatch.build.targets.sdist]
-# include = [
-#   "pkg/*.py",
-#   "/tests",
-# ]
-# exclude = [
-#   "*.json",
-#   "pkg/_compat.py",
-# ]
+#[tool.hatch.build.targets.wheel.force-include]
+#"files" = "make_cv/files"
