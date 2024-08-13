@@ -6,11 +6,19 @@ make\_cv is a program that uses Python and LaTex to make a faculty curriculum vi
 
 This assumes you have LaTex and Python installed on your system.  If not see Appendix A for how to install those programs.  To install, use pip:
 
-`pip install make_cv`
+Mac  
+`python pip install --upgrade pip`  
+`pip install make_cv`   
+Windows  
+`python pip install --upgrade pip`  
+`pip install make_cv` 
 
 Once make\_cv is installed, you need to create the data directories and default files for adding data.  Choose a name for the root folder for keeping your c.v. related data.  In this example, this folder is called `mydata`.  To create this folder, execute the command
 
-`make_cv -b <path>/mydata`
+Mac  
+`make_cv -b <path>/mydata`   
+Windows  
+`python -m make_cv.make_cv -b <path>\mydata` 
 
 Where \<path\> is the path to the mydata folder.  This can be a relative or full path.  The \-b flag tells make\_cv to create a new data directory.  For example “`make_cv -b mydata”` creates the default data folders and files in a folder called `mydata` in  current working directory.   Later on, you can configure the locations of all files and folders, but to get started it is easiest to use the defaults.
 
@@ -36,9 +44,12 @@ Teaching/teaching evaluation data.xlsx
 
 To test that the installation is working, you can make the default c.v. by changing to the mydata/CV directory and executing the command
 
-`make_cv`
+Mac  
+`make_cv`   
+Windows  
+`python -m make_cv.make_cv` 
 
-This will make the file `cv.pdf` in the CV folder which is just based on the default data provided.  If something goes wrong hit ctrl-c to stop things or you can just close the terminal window and open a new one.  If you try to do this while you have the file cv.pdf open, it will hang.  It may restart if you close the cv.pdf file, but sometimes you still need to restart the process.  
+This will make the file `cv.pdf` in the CV folder which is just based on the small amount of default data provided.  If something goes wrong hit ctrl-c to stop things or you can just close the terminal window and open a new one.  If you try to do this while you have the file cv.pdf open, it will hang.  It may restart if you close the cv.pdf file, but sometimes you still need to restart the process.  
 
 ### The Data
 
@@ -133,7 +144,7 @@ Further configurations can be done by editing the file cv\_header.tex, cv.tex, a
 
 1. cv\_header.tex is the LaTex header file that gets imported into cv.tex.  If you are comfortable with Latex, you can customize things like, fonts, margins, etc… with this file.  
 2. cv.tex is the first page information for the c.v.  This contains things like your name and contact information, employment and education history, etc…   You can format this how you like, but know that the \\section\* command should be used to create different sections within the c.v.  
-3. cv\_tables.tex is included by cv.tex, and is responsible for including all of the automatically created tables in the c.v.   If you would like to use your own custom system for a particular section of the data, you can comment out the table that is being included by cv.tex, and import whatever LaTex compatible file you want.
+3. cv\_tables.tex is included by cv.tex, and is responsible for including all of the automatically created tables in the c.v.   If you would like to use your own custom system for a particular section of the data, you can comment out the table that is being included by cv.tex, and import whatever LaTeX compatible file you want.
 
 
 ### Advanced Features & Command Line Options
@@ -148,7 +159,11 @@ make\_cv can do a lot of things automatically for you.  If you add a `-h` flag i
 
 For example, the following will look for any new google scholar entries in the last year, help you categorize them, then update the citation counts using google scholar, update the student markers, and exclude the proposals and conferences section when making a c.v.
 
+Mac  
 `make_cv -g true -c true -m true -e Conference -e Proposals`
+
+Windows  
+`python -m make_cv.make_cv -g true -c true -m true -e Conference -e Proposals`
 
 Most of the advanced features are by default off, but you can turn them on by default by editing the cv.cfg file in your CV folder.  I usually only use the advanced features intermittently so I leave the advanced features off by default and then use the command line options when I need to use them.
 
@@ -156,11 +171,11 @@ The first time you run make\_cv it will find unclassified entries in your .bib f
 
 If you add \-g true, it will use Google Scholar to find any entries that have appeared in the last year and ask you if you want to add them.  Everything in google scholar has an id, so it keeps track of these in the .bib file and will never ask you to add an entry twice.  It also uses these id tags when it updates the number of citations an entry has.  It will use bibtexautocomplete to add doi information to the new entries.  The doi’s appear as hyperlinks in the c.v. so people can click on an entry in your c.v. and be taken to the corresponding web location for that item.
 
-If you add \-m true, it uses the files “undergraduate research data.xlsx”, “thesis data.xlsx” and “current student data.xlsx” to find the first initial and last names of all of your student advisees.  It then adds a marker after those names in the .bib file.  The two markers are \\us for undergraduate student and \\gs for graduate student.  The actual symbol that these commands create is defined in the .bib file.  Currently, make\_cv is configured to mark these authors in perpetuity, meaning that if you have a student who was an undergraduate advisee that became a graduate advisee, then you published with them 10 years later, that author will still receive both an undergraduate and a graduate advisee student marker.  There is a way to set a time limit for when this terminates, but I haven’t exposed that functionality yet.
+If you add \-m true, it uses the files “undergraduate research data.xlsx”, “thesis data.xlsx” and “current student data.xlsx” to find the first initial and last names of all of your student advisees.  It then adds a marker after those names in the .bib file.  The two markers are \\us for undergraduate student and \\gs for graduate student.  The actual symbol that these commands create is defined in the `cv_header.tex` file.  Currently, make\_cv is configured to mark these authors in perpetuity, meaning that if you have a student who was an undergraduate advisee that became a graduate advisee, then you published with them 10 years later, that author will still receive both an undergraduate and a graduate advisee student marker.  There is a way to set a time limit for when this terminates, but I haven’t exposed that functionality yet.
 
-If you add \-M false, it will redefine the \\us and \\gs markers so that no markers are produced in the file. This is also configurable in the cv.cfg file with the entry includestudentmarkers.
+If you add `-M false`, it will redefine the \\us and \\gs markers so that no markers are produced in the file. This is also configurable in the cv.cfg file with the entry includestudentmarkers.
 
-If you add \-c true, it will use google scholar to update/add the field “citations” in the .bib file.  This is the number of times this article has been cited.  It will appear in brackets after the bibliographic entry in the c.v.  i.e.
+If you add `-c true`, it will use google scholar to update/add the field “citations” in the .bib file.  This is the number of times this article has been cited.  It will appear in brackets after the bibliographic entry in the c.v.  i.e.
 
 19. N. Bagheri-Sadeghi\+, B. T. Helenbrook, and K. D. Visser. “Ducted Wind Turbine Optimization and Sensitivity to Rotor Position”, Wind Energy Science 3, no. 1 (Apr. 2018), pp. 221–229. doi: 10.5194/wes-3-221-2018. \[42\]
 
@@ -194,9 +209,9 @@ when installing LaTeX change the default paper size to letter and also click “
 
 ##### Appendix B: Instructions for Modifying Your scholarship.bib file with Jabref
 
-Jabref refuses to save a file to a network drive so I have to save it to the desktop and then drag it over to the network drive.  
+(Warning: Jabref refuses to save a file to a network drive so I have to save it to the desktop and then drag it over to the network drive.) 
 
-To get Jabref to show the categorization of the entries, under the “view” menu make sure “Groups” has a check mark next to it.  Right click on the “All Entries” group in the left side bar.  Choose “Add subgroup”, give the group the name “Categories”, Choose “Collect By” “Specified Keywords” dialog, then “Generate groups from keywords in the following field” and type “keywords” for the field to group by.  For delimiter put a semicolon, then hit ok.   This should make your current categories show in the left side bar.  Save the file so you won’t have to do this again, the next time you open it. 
+To get Jabref to show the categorization of the entries, under the “View” menu make sure “Groups” has a check mark next to it.  Right click on the “All Entries” group in the left side bar.  Choose “Add subgroup”, give the group the name “Categories”, Choose “Collect By” “Specified Keywords” dialog, then “Generate groups from keywords in the following field” and type “keywords” for the field to group by.  For delimiter put a semicolon, then hit ok.   This should make your current categories show in the left side bar.  Save the file so you won’t have to do this again, the next time you open it. 
 
 To edit the category of an entry (journal,conference,refereed conference…), select the entry by left clicking on it, then right click on the category in the left hand side bar you would like to either add or remove the entry from. You will then see options to “Add selected entries to this group” or “Remove selected entries from this group”. 
 
