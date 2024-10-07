@@ -114,7 +114,8 @@ This folder contains 3 files
 5. `service data.xlsx`.   Use this file to keep track of your service data.   The categories are “Description”, “Type”-(University,Department,Professional,Community), “Position”-(Member,Chair), “Term”, “Calendar Year”, “Hours/Semester”.  “Hours/Semester” is not used when making the c.v..  If you have repeated service each term, you should copy and paste the lines from the previous term and make a new entry for each term that you are on an assignment.   make\_cv will gather all like entries into a single entry in the c.v. with a year sequence.  For example, “Science fair judge 2018-2021,2023”  
 6. I recommend that you let Web of Science keep your paper reviewing activity records for you.  To use the service do the following  
    1.  Sign up for an account at [Web of Science](https://clarivate.com/products/scientific-and-academic-research/research-publishing-solutions/reviewer-recognition-service/)  
-   2. Forward email review receipts from journals to reviews@webofscience.com and they will keep a certified log of your reviewing activities.  (Many journals are doing this for you automatically now).
+   2. Forward any email receipts you receive from journals when you review a paper to reviews@webofscience.com. Web of Science will store this information for you, providing a certified log of your reviewing activities. (Many journals are doing this for you automatically now).
+
 
    To get the most recent data from Web of Science for your c.v.
 
