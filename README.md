@@ -91,9 +91,9 @@ To use Google Scholar to get started making your scholarship.bib file
 
       
 
+
 Invited talks are generally not picked up by any searches so these must be entered manually.  These are stored using the “Misc” BibTex record type.  You can use BibDesk / Jabref to add these by creating a new entry.  The fields needed are the following:
 	 
-  	```bibtex
          @misc{Helenbrook:2009a,
 
          author \= {B. T. Helenbrook},
@@ -105,9 +105,6 @@ Invited talks are generally not picked up by any searches so these must be enter
          keywords \= {invited},
 
          title \= {Why is Fluid Mechanics Interesting?}}
-
-         
-
 Patents use the “Misc” type as well.  These can be downloaded from Google Scholar.
 
 Service  
