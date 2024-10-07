@@ -194,11 +194,13 @@ def read_args(parser,argv):
 	if (not ok):
 		print("Incomplete or Unreadable configuration file " +args.configfile +".\n") 
 		YN = input('Would you like to update configuration file named cv.cfg [Y/N]?')
-		if YN == 'Y' or YN=='y':
+		if YN == 'Y' or YN =='y':
 			newconfig = create_config('cv.cfg',configuration)
 			return(newconfig,args)
-		else: YN=='N' or YN=='n':
+		elif YN =='N' or YN =='n':
 			print("Couldn't proceed due to Incomplete or Unreadable configuration file")
+			return
+		else:
 			return
 		
 	return([configuration,args])
