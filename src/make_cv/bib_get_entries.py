@@ -48,6 +48,7 @@ def bib_get_entries(bibfile,author_id,years,outputfile,scraper_id=None):
 	author = scholarly.search_author_id(author_id)
 	author = scholarly.fill(author,sections=['indices','publications'])
 
+	# Set starting year for search
 	if years > 0:
 		today = date.today()
 		year = today.year
@@ -100,52 +101,77 @@ def bib_get_entries(bibfile,author_id,years,outputfile,scraper_id=None):
 			# found match
 			continue
 		
-		print('Should I try to find a match for:')
-		print(pub['bib'])
+		print('Should I try to complete this record using bibtex autocomplete:')
+		try:
+			print(pub['bib']['citation'] +' ' +pub['bib']['title'])
+		except KeyError:
+			print(pub['bib']['title'])
+			
 		YN = input('Y/N?')
 		if YN == 'N':
 			continue
 			
+		# try to fill entry using bibtex autocomplete?
+		with open('btac.bib','w') as tempfile:
+			tempfile.write('@article{' +pub_id +',\n title={'+pub['bib']['title'] +'},\n}')
+		tempfile.close()
+		btac()
+		with open('btac.bib') as bibtex_file:
+			bibtex_str = bibtex_file.read()
 		
-		if useGoogle:
-			# Try to find bibtex record using google scholar
-			query = scholarly.search_pubs(pub['bib']['title'])
-			if (query):
-				for pub in query:
-					bibtex_str = scholarly.bibtex(pub)
-					print(bibtex_str)
-					YN = input('Is this entry correct and ready to be added?\nOnce an entry is added any future changes must be done manually.\n[Y/N]? ')
-					if YN == 'Y':
-						bib_database = bibtexparser.loads(bibtex_str, tbparser)
-						bib_database.entries[-1]['google_pub_id'] = pub_id
-						add_keyword(bib_database.entries[-1])
-						newentries.append(bib_database.entries[-1]['ID'])
-		else:
-			# try to fill entry using bibtex autocomplete?
-			with open('btac.bib','w') as tempfile:
-				tempfile.write('@article{' +pub_id +',\n title={'+pub['bib']['title'] +'},\n}')
-			tempfile.close()
-			btac()
-			with open('btac.bib') as bibtex_file:
-				bibtex_str = bibtex_file.read()
-			
-			print(bibtex_str)
-			YN = input('Is this entry correct and ready to be added?\nOnce an entry is added any future changes must be done manually.\n[Y/N]? ')
-			if YN == 'Y':
-				bib_database = bibtexparser.loads(bibtex_str, tbparser)
-				bib_database.entries[-1]['google_pub_id'] = pub_id
-				if 'booktitle' in bib_database.entries[-1].keys():
-					bib_database.entries[-1]['ENTRYTYPE'] = 'inproceedings'
-				elif 'note' in bib_database.entries[-1].keys():
-					bib_database.entries[-1]['ENTRYTYPE'] = 'misc'
-				add_keyword(bib_database.entries[-1])
+		bib_database = bibtexparser.loads(bibtex_str, tbparser)
+		if 'booktitle' in bib_database.entries[-1].keys():
+			bib_database.entries[-1]['ENTRYTYPE'] = 'inproceedings'
+		elif 'note' in bib_database.entries[-1].keys():
+			bib_database.entries[-1]['ENTRYTYPE'] = 'misc'
+		bib_database.entries[-1]['google_pub_id'] = pub_id
+		print(BibTexWriter()._entry_to_bibtex(bib_database.entries[-1]))
+
+		YN = input('Is this btac entry correct and ready to be added?\nOnce an entry is added any future changes must be done manually.\n[Y/N]?')
+		if YN == 'Y':
+			add_keyword(bib_database.entries[-1])
+			if 'author' in bib_database.entries[-1].keys():
 				IDstring = re.search('^[A-z]+',bib_database.entries[-1]['author']).group(0)
 				IDstring += year
 				IDstring += re.search('^[A-z]+',bib_database.entries[-1]['title']).group(0)
 				bib_database.entries[-1]['ID'] = IDstring
 				newentries.append(bib_database.entries[-1]['ID'])
+			else:
+				print('Skipped entry because it had no author field\n')
+		else:
+			print('Should I try to find a match using Google Scholar instead? (Sometimes this gets blocked by Google.):')
+			YN = input('Y/N?')
+			if YN == 'N':
+				continue
+
+			pub_filled = scholarly.fill(pub)
+			try:
+				bibtex_str = scholarly.bibtex(pub_filled)
+				print(bibtex_str)
+			except KeyError:
+				print('entry is missing pub_type or bib_id so skipping\n')
+				continue
 				
-				
+			YN = input('Is this entry correct and ready to be added?\n[Y/N]? ')	
+			if YN == 'Y':
+				bib_database = bibtexparser.loads(bibtex_str, tbparser)
+				bib_database.entries[-1]['google_pub_id'] = pub_id
+				add_keyword(bib_database.entries[-1])
+				newentries.append(bib_database.entries[-1]['ID'])		
+# 			# Try to find bibtex record using google scholar & title
+# 			query = scholarly.search_pubs(pub['bib']['title'])
+# 			if (query):
+# 				for pub in query:
+# 					print(pub)
+# 					bibtex_str = scholarly.bibtex(pub)
+# 					YN = input('Is this entry correct and ready to be added?\n[Y/N]? ')
+# 					if YN == 'Y':
+# 						bib_database = bibtexparser.loads(bibtex_str, tbparser)
+# 						bib_database.entries[-1]['google_pub_id'] = pub_id
+# 						add_keyword(bib_database.entries[-1])
+# 						newentries.append(bib_database.entries[-1]['ID'])
+# 			else:
+# 				print('No google record found\n')
 # 		journal = re.search('^[A-z. ]+',citestring).group(0)
 # 		startpage = re.search('[0-9]+-',citestring).group(0)
 # 		startpage = startpage[:len(startpage)-1]
@@ -200,16 +226,7 @@ if __name__ == "__main__":
 			args.author_id = google_file.readline().strip('\n\r')
 		
 	bib_get_entries(args.bibfile,args.author_id,args.years,args.output,args.scraperID)
-	
 
-		
-	
-# my Google Scholar ID: 'm_of3wYAAAAJ'
-# my scraperAPI API key '4ea7a522ac7475f907fe6595bb2a38dd'
-	
-
-	
-	
 
 
 

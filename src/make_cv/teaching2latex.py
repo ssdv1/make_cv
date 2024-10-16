@@ -20,6 +20,9 @@ def teaching2latex(f,years,inputfile):
 	except OSError:
 		print("Could not open/read file: " + source)
 		return(0)
+	except ParserError:
+		print("Error reading file: " + source)
+		return(0)
 
 	if years > 0:
 		today = date.today()

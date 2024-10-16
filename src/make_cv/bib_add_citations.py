@@ -130,17 +130,3 @@ if __name__ == "__main__":
 			args.author_id = google_file.readline().strip('\n\r')
 	
 	bib_add_citations(args.bibfile,args.author_id,args.output,args.scraperID)
-	
-
-		
-	
-# my Google Scholar ID: 'm_of3wYAAAAJ'
-# my scraperAPI API key '4ea7a522ac7475f907fe6595bb2a38dd'
-	
-
-	
-	
-
-
-
-

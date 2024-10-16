@@ -67,11 +67,20 @@ def input_keyword(keyword):
 	return(keyword)
 
 def add_keyword(paperbibentry):
-	if not ("keywords" in paperbibentry.keys()):
-		print(paperbibentry)
-		keyword = guess_type(paperbibentry)
-		keyword = input_keyword(keyword)
+	keyword = guess_type(paperbibentry)
+	input_keyword(keyword)
+	if "keywords" in paperbibentry.keys():
+		response = input('Should I erase current keywords [Y/N] default is [Y]')
+		if (response == 'N'):
+			paperbibentry["keywords"] += '; ' +keyword
+		else:
+			paperbibentry["keywords"] = keyword
+	else:
 		paperbibentry["keywords"] = keyword
+
+def check_keyword_exists(paperbibentry):
+	if not ("keywords" in paperbibentry.keys()):
+		return(False)
 	else:
 		# make sure there is a keyword in list of classification keywords
 		klist = re.split(';|,', paperbibentry["keywords"])
@@ -81,15 +90,8 @@ def add_keyword(paperbibentry):
 				keyfound = True
 				break
 		if not keyfound:
-			print(paperbibentry)
-			keyword = guess_type(paperbibentry)
-			input_keyword(keyword)
-			response = input('Should I erase current keywords [Y/N] default is [Y]')
-			if (response == 'N'):
-				paperbibentry["keywords"] += '; ' +keyword
-			else:
-				paperbibentry["keywords"] = keyword
-
+			return(False)
+	return(True)
 
 def bib_add_keywords(bibfile,outputfile):
 	# homogenize_fields: Sanitize BibTeX field names, for example change `url` to `link` etc.
@@ -105,7 +107,9 @@ def bib_add_keywords(bibfile,outputfile):
 	bibdblen = len(bib_database.entries)
 	for paperbibentry in bib_database.entries:
 		if "year" in paperbibentry.keys() or "date" in paperbibentry.keys():
-			add_keyword(paperbibentry)
+			if not check_keyword_exists(paperbibentry):
+				print(BibTexWriter()._entry_to_bibtex(paperbibentry))
+				add_keyword(paperbibentry)
 			new_db.entries.append(paperbibentry)
 	
 	new_db.entries = sorted(new_db.entries, key=lambda k: int(k["year"]), reverse=True)	

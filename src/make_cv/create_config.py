@@ -11,7 +11,7 @@ defaults = {'data_dir': '..',
 				'ReviewsFileJSON': 'reviews data.json',
 				'UpdateCitations': 'false',
 				'UpdateStudentMarkers': 'false',
-				'GetNewScholarshipEntries': 'false',
+				'GetNewScholarshipEntries': '0',
 				'SearchForDOIs': 'false',
 				'ConvertJSON': 'false'}
 

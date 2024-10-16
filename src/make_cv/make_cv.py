@@ -159,7 +159,7 @@ def add_default_args(parser):
 	parser.add_argument('-S','--ScraperID', help='ScraperID (not necessary, but avoids Google blocking requests)')
 	parser.add_argument('-s','--UseScraper', help='Use scraper to avoid blocking by Google',  choices=['true','false'])
 	parser.add_argument('-G','--GoogleID', help='GoogleID (used for finding new publications()')
-	parser.add_argument('-g','--GetNewScholarshipEntries', help='search for and add new entries to the .bib file',  choices=['true','false'])
+	parser.add_argument('-g','--GetNewScholarshipEntries', help='search for and add new entries from the last N (default 1) years to the .bib file', nargs='?', const='1', default='0')
 	parser.add_argument('-I','--SearchForDOIs', help='search for and add missing DOIs to the .bib file',  choices=['true','false'])
 	parser.add_argument('-c','--UpdateCitations', help='update citation counts',  choices=['true','false'])
 	parser.add_argument('-C','--IncludeCitationCounts', help='put citation counts in cv', choices=['true','false'])
@@ -265,7 +265,12 @@ def process_default_args(config,args):
 		scraperID = config['ScraperID']
 		
 	# add new entries to .bib file	
-	if config.getboolean('GetNewScholarshipEntries'):
+	if config['GetnewScholarshipEntries'] == 'false':
+		config['GetnewScholarshipEntries'] = '0'
+	elif config['GetnewScholarshipEntries'] == 'true':
+		config['GetnewScholarshipEntries'] = '1'
+	
+	if config.getint('GetNewScholarshipEntries') != 0:
 		print("Trying to find new .bib entries from Google Scholar")
 		if config['GoogleID'] == "":
 			print("Can't find new scholarship entries without providing Google ID")
@@ -273,7 +278,8 @@ def process_default_args(config,args):
 		filename = faculty_source +os.sep +config['ScholarshipFolder'] +os.sep +config['ScholarshipFile']
 		backupfile = faculty_source +os.sep +config['ScholarshipFolder'] +os.sep +'backup1.bib'
 		shutil.copyfile(filename,backupfile)
-		bib_get_entries(backupfile,config['GoogleID'],1,filename,scraperID)
+		nyears = int(config['GetNewScholarshipEntries'])
+		bib_get_entries(backupfile,config['GoogleID'],nyears,filename,scraperID)
 		
 	# add/update citations counts in .bib file	
 	if config.getboolean('UpdateCitations'):
