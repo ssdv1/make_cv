@@ -10,6 +10,7 @@ import os
 import sys
 import numpy as np
 from datetime import date
+from zipfile import BadZipFile
 
 from .stringprotect import str2latex
 
@@ -20,8 +21,9 @@ def teaching2latex(f,years,inputfile):
 	except OSError:
 		print("Could not open/read file: " + source)
 		return(0)
-	except ParserError:
+	except BadZipFile:
 		print("Error reading file: " + source)
+		print("If you open this file with Excel and resave, the problem should go away")
 		return(0)
 
 	if years > 0:
