@@ -150,7 +150,7 @@ Further configurations can be done by editing the file cv\_header.tex, cv.tex, a
 
 make\_cv can do a lot of things automatically for you.  If you add a `-h` flag it will give you a full list of things you can use it to do.  Here are some of the most useful options:  
     
-  `-g {NUMBER OF YEARS} search for and add new entries to the .bib file from Google Scholar for the last few specified number of years; use -1 to search from the beginning; default is 1 if -g is passed without specifying a number.`  
+  `-g {NUMBER OF YEARS} search for and add new entries to the .bib file from Google Scholar for the last few specified number of years; use -1 to search from the beginning; defaults to 1 if -g is passed without specifying a number.`  
   `-c {true,false} update citation counts stored in .bib file`  
   `-m {true,false} update the student author markers`  
   `-I {true,false} using bibtexautocomplete, search for and add missing doi’s to .bib file`  
