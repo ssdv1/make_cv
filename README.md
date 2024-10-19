@@ -150,16 +150,16 @@ Further configurations can be done by editing the file cv\_header.tex, cv.tex, a
 
 make\_cv can do a lot of things automatically for you.  If you add a `-h` flag it will give you a full list of things you can use it to do.  Here are some of the most useful options:  
     
-  `-g {true,false} search for and add new entries to the .bib file using google scholar`  
+  `-g {NUMBER OF YEARS} search for and add new entries to the .bib file from Google Scholar for the last few specified number of years; use -1 to search from the beginning; default is 1 if unspecified.`  
   `-c {true,false} update citation counts stored in .bib file`  
   `-m {true,false} update the student author markers`  
   `-I {true,false} using bibtexautocomplete, search for and add missing doi’s to .bib file`  
   `-e {SECTION} exclude section from cv where the sections are Grants, PersonalAwards, Conference, GradAdvisees, Proposals, UndergradResearch, Reviews, Refereed, Invited, Service, Teaching, Book, Patent, StudentAwards, Journal`
 
-For example, the following will look for any new google scholar entries in the last year, help you categorize them, then update the citation counts using google scholar, update the student markers, and exclude the proposals and conferences section when making a c.v.
+For example, the following will look for any new google scholar entries in the 4 last years, help you categorize them, then update the citation counts using google scholar, update the student markers, and exclude the proposals and conferences section when making a c.v.
 
 Mac  
-`make_cv -g true -c true -m true -e Conference -e Proposals`
+`make_cv -g 4 -c true -m true -e Conference -e Proposals`
 
 Windows  
 `python -m make_cv.make_cv -g true -c true -m true -e Conference -e Proposals`
