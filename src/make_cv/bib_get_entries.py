@@ -141,10 +141,25 @@ def bib_get_entries(bibfile,author_id,years,outputfile,scraper_id=None):
 		else:
 			print('Should I try to find a match using Google Scholar instead? (Sometimes this gets blocked by Google.):')
 			YN = input('Y/N?')
-			if YN == 'N':
+			if YN != 'Y' and YN !='y':
 				continue
 
 			pub_filled = scholarly.fill(pub)
+			if 'journal' in pub_filled['bib']:
+        			pub_filled['bib']['ENTRYTYPE'] = 'article'
+    			elif 'booktitle' in pub_filled['bib']:
+        			pub_filled['bib']['ENTRYTYPE'] = 'inproceedings' 
+    			elif 'conference' in pub_filled['bib']:
+        			pub_filled['bib']['ENTRYTYPE'] = 'conference'
+    			elif 'publisher' in pub_filled['bib']:
+        			pub_filled['bib']['ENTRYTYPE'] = 'book'
+    			elif 'institution' in pub_filled['bib']:
+        			pub_filled['bib']['ENTRYTYPE'] = 'techreport'
+    			elif 'patent' in pub_filled['bib']:
+        			pub_filled['bib']['ENTRYTYPE'] = 'patent'
+    			elif 'note' in pub_filled['bib']:
+        			pub_filled['bib']['ENTRYTYPE'] = 'misc'
+				
 			try:
 				bibtex_str = scholarly.bibtex(pub_filled)
 				print(bibtex_str)
